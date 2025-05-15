@@ -1,6 +1,6 @@
 # 🌲 deforestwatch
 
-**AI-powered land use monitoring tool following deforestation**  
+**AI-powered land use following deforestation monitoring tool **  
 Using Earth observation data + deep learning to map what comes *after* the forest is gone.
 
 ---
