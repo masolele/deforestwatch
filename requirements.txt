@@ -2,6 +2,7 @@ streamlit
 geemap
 earthengine-api
 tensorflow
+datetime
 keras
 numpy
 pillow
