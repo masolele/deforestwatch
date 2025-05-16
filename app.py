@@ -13,6 +13,8 @@ from huggingface_hub import hf_hub_download
 import os
 import json
 from google.oauth2 import service_account
+from streamlit_folium import st_folium
+import folium
 
 # Authenticate Earth Engine (Streamlit Cloud will use secrets.toml)
 # service_account = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
@@ -78,13 +80,34 @@ if uploaded_file:
         roi = geemap.geopandas_to_ee(gdf)
 
 # Fallback to draw ROI
-if roi is None:
-    st.subheader("Or draw ROI on the map")
-    m = geemap.Map()
-    m.add_basemap("SATELLITE")
-    m.add_draw_control()
-    m.to_streamlit(height=500)
-    roi = m.user_roi
+# if roi is None:
+#     st.subheader("Or draw ROI on the map")
+#     m = geemap.Map()
+#     m.add_basemap("SATELLITE")
+#     m.add_draw_control()
+#     m.to_streamlit(height=500)
+#     roi = m.user_roi
+
+st.subheader("Or draw ROI on the map")
+
+# Create map centered on Africa
+m = folium.Map(location=[0, 20], zoom_start=3)
+draw = folium.plugins.Draw(export=True)
+draw.add_to(m)
+
+output = st_folium(m, height=500, width=700)
+
+roi = None
+if output and "all_drawings" in output and output["all_drawings"]:
+    from shapely.geometry import shape
+    import geopandas as gpd
+
+    geojson_geom = output["all_drawings"][-1]["geometry"]
+    shp = shape(geojson_geom)
+    gdf = gpd.GeoDataFrame(index=[0], geometry=[shp], crs="EPSG:4326")
+
+    import geemap
+    roi = geemap.geopandas_to_ee(gdf)
 
 if roi:
     region = get_region_from_roi(roi)
