@@ -1,0 +1,10 @@
+streamlit
+geemap
+earthengine-api
+tensorflow
+keras
+numpy
+pillow
+rasterio
+scikit-image
+geopandas
