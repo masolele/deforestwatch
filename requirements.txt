@@ -1,6 +1,6 @@
 tensorflow==2.16.1
 keras==3.0.0
-numpy==1.24.3
+numpy
 streamlit
 streamlit_folium
 folium
