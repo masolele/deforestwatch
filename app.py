@@ -7,7 +7,7 @@ from PIL import Image
 import numpy as np
 import rasterio
 from rasterio.transform import from_origin
-from model_utils import get_region_from_roi, load_region_model
+#from model_utils import get_region_from_roi, load_region_model
 from preprocess_utils import preprocess_planet
 from huggingface_hub import hf_hub_download
 import os
@@ -35,6 +35,8 @@ json_object = json.dumps(json_object)
 # Authorising the app
 credentials = ee.ServiceAccountCredentials(service_account, key_data=json_object)
 ee.Initialize(credentials)
+
+from model_utils import get_region_from_roi, load_region_model
 
 st.set_page_config(layout="wide")
 st.title("🌍 Deforestation Land Use Prediction App")
