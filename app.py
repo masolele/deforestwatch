@@ -33,24 +33,28 @@ from google.oauth2 import service_account
 # SERVICE_ACCOUNT_KEY = 'landuseJSON/land-use-292522-392b955456aa.json'
 # ee.Initialize(ee.ServiceAccountCredentials(None, SERVICE_ACCOUNT_KEY))
 ####
-try:
-    service_account_email = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
-    private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
+def init_earth_engine():
+    try:
+        service_account_email = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
+        private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
 
-    credentials = ee.ServiceAccountCredentials(
-        email=None,
-        key_data=private_key
-    )
+        credentials = ee.ServiceAccountCredentials(
+            email=service_account_email,
+            key_data=private_key
+        )
+        ee.Initialize(credentials)
+        st.sidebar.success("✅ Earth Engine authenticated (service account)")
+    except Exception as e:
+        try:
+            ee.Initialize()
+            st.sidebar.success("✅ Earth Engine authenticated (local user)")
+        except Exception as ee_error:
+            st.sidebar.error("❌ Earth Engine authentication failed")
+            st.error("GEE not initialized. Make sure secrets are set or run `ee.Authenticate()` locally.")
+            st.stop()
 
-    ee.Initialize(credentials)
-    st.sidebar.success("✅ Earth Engine authenticated")
-
-except Exception as e:
-    st.sidebar.error("❌ Earth Engine authentication failed.")
-    st.error(
-        "Earth Engine failed to initialize. Please make sure you've set the Earth Engine service account in your Streamlit secrets."
-    )
-    st.stop()
+# Call it right away
+init_earth_engine()
 
 st.set_page_config(layout="wide")
 st.title("🌍 Deforestation Land Use Prediction App")
