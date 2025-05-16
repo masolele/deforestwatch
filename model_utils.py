@@ -5,9 +5,9 @@ from huggingface_hub import hf_hub_download
 
 # Region-to-model file names
 region_models = {
-    'Africa': 'sentAfrica.hdf5',
-    'Asia': 'sentAsia.hdf5',
-    'Latin America': 'sentLatinAmerica.hdf5'
+    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.hdf5',
+    'Asia': 'best_weights_VIT_FusionSEA.hdf5',
+    'Latin America': 'best_weights_VIT_FusionSA1.hdf5'
 }
 
 # Bounding boxes for region detection
@@ -28,7 +28,7 @@ def load_region_model(region_name):
     filename = region_models[region_name]
 
     model_path = hf_hub_download(
-        repo_id="masolele/deforestwatch-models",  # Change if your username/repo differs
+        repo_id="Masolele/deforestwatch-models",  # Change if your username/repo differs
         filename=filename,
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
