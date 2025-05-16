@@ -9,11 +9,22 @@ from rasterio.transform import from_origin
 from model_utils import get_region_from_roi, load_region_model
 from preprocess_utils import preprocess_planet
 from huggingface_hub import hf_hub_download
+from google.oauth2 import service_account
 
 # Authenticate Earth Engine (Streamlit Cloud will use secrets.toml)
-service_account = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
+# service_account = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
+# private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
+# credentials = ee.ServiceAccountCredentials(service_account, key_data=private_key)
+# ee.Initialize(credentials)
+
+service_account_email = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
 private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
-credentials = ee.ServiceAccountCredentials(service_account, key_data=private_key)
+
+credentials = ee.ServiceAccountCredentials(
+    email=service_account_email,
+    key_data=private_key
+)
+
 ee.Initialize(credentials)
 
 st.set_page_config(layout="wide")
