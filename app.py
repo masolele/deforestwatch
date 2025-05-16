@@ -10,7 +10,8 @@ from rasterio.transform import from_origin
 from model_utils import get_region_from_roi, load_region_model
 from preprocess_utils import preprocess_planet
 from huggingface_hub import hf_hub_download
-from google.oauth2 import service_account
+import os
+import json
 
 # Authenticate Earth Engine (Streamlit Cloud will use secrets.toml)
 # service_account = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
@@ -18,43 +19,21 @@ from google.oauth2 import service_account
 # credentials = ee.ServiceAccountCredentials(service_account, key_data=private_key)
 # ee.Initialize(credentials)
 
-# service_account_email = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
-# private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
-
-# credentials = ee.ServiceAccountCredentials(
-#     email=service_account_email,
-#     key_data=private_key
-# )
-
-# ee.Initialize(credentials)
-
 # Earth Engine initialization with fail-safe
 #########
 # SERVICE_ACCOUNT_KEY = 'landuseJSON/land-use-292522-392b955456aa.json'
 # ee.Initialize(ee.ServiceAccountCredentials(None, SERVICE_ACCOUNT_KEY))
 ####
-def init_earth_engine():
-    try:
-        service_account_email = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
-        private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
+json_data = st.secrets["json_data"]
 
-        credentials = ee.ServiceAccountCredentials(
-            email=service_account_email,
-            key_data=private_key
-        )
-        ee.Initialize(credentials)
-        st.sidebar.success("✅ Earth Engine authenticated (service account)")
-    except Exception as e:
-        try:
-            ee.Initialize()
-            st.sidebar.success("✅ Earth Engine authenticated (local user)")
-        except Exception as ee_error:
-            st.sidebar.error("❌ Earth Engine authentication failed")
-            st.error("GEE not initialized. Make sure secrets are set or run `ee.Authenticate()` locally.")
-            st.stop()
+# Preparing values
+json_object = json.loads(json_data, strict=False)
+service_account = json_object['client_email']
+json_object = json.dumps(json_object)
 
-# Call it right away
-init_earth_engine()
+# Authorising the app
+credentials = ee.ServiceAccountCredentials(service_account, key_data=json_object)
+ee.Initialize(credentials)
 
 st.set_page_config(layout="wide")
 st.title("🌍 Deforestation Land Use Prediction App")
