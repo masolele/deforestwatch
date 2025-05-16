@@ -30,6 +30,7 @@ def load_region_model(region_name):
     model_path = hf_hub_download(
         repo_id="Masolele/deforestwatch-models",  # Change if your username/repo differs
         filename=filename,
+        repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
 
