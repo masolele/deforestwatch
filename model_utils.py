@@ -24,6 +24,13 @@ def get_region_from_roi(roi):
             return name
     return None
 
+# Define custom objects (including TFOpLambda)
+def get_custom_objects():
+    return {
+        'TFOpLambda': tf.keras.layers.Lambda,  # Maps TFOpLambda to standard Lambda
+        # Add other custom layers here if needed
+    }
+
 def load_region_model(region_name):
     filename = region_models[region_name]
 
@@ -33,5 +40,7 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
-
-    return load_model(model_path, compile=False)
+         # Load with custom objects
+    with custom_object_scope(get_custom_objects()):
+        return load_model(model_path, compile=False)
+    #return load_model(model_path, compile=False)
