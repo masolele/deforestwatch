@@ -3,9 +3,9 @@ streamlit_folium
 folium
 geemap
 earthengine-api
-tensorflow
+tensorflow==2.14.0
 datetime
-keras
+keras==2.14.0
 numpy
 pillow
 rasterio
