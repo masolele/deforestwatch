@@ -27,6 +27,20 @@ def get_region_from_roi(roi):
             return name
     return None
 
+def get_custom_objects():
+    """Register all custom layers and objects used in the model"""
+    custom_objects = {
+        # Handle TensorFlow operation wrapper layers
+        'TFOpLambda': tf.keras.layers.Lambda,
+        
+        # Register your custom attention layers
+        'Attention_UNetFusion3I': Attention_UNetFusion3I,
+        'Attention_UNetFusion3I_Sentinel': Attention_UNetFusion3I_Sentinel,
+        
+        # Add any other custom layers here
+    }
+    return custom_objects
+
 
 def load_region_model(region_name):
     filename = region_models[region_name]
@@ -38,4 +52,9 @@ def load_region_model(region_name):
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
 
-    return load_model(model_path, compile=False, safe_mode=False)
+    #return load_model(model_path, compile=False)
+        # Load model with custom objects
+    with custom_object_scope(get_custom_objects()):
+        model = load_model(model_path, compile=False)
+    
+    return model
