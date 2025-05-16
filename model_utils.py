@@ -30,10 +30,14 @@ def get_region_from_roi(roi):
 # Custom layer registration
 def get_custom_objects():
     """Register all custom layers and objects used in the model"""
+    def safe_unstack(x, num=None, axis=-1):
+        return tf.unstack(x, num=num, axis=axis)
+    
     custom_objects = {
         # Register TensorFlow operations used in Lambda layers
         'TFOpLambda': tf.keras.layers.Lambda,
-        'tf': tf,  # This allows tf operations in Lambda layers
+        'tf': tf,
+        'safe_unstack': safe_unstack,
         
         # Register your custom attention layers
         'Attention_UNetFusion3I': Attention_UNetFusion3I,
@@ -43,11 +47,8 @@ def get_custom_objects():
         'gating_signal': gating_signal,
         'attention_block': attention_block,
         'repeat_elem': repeat_elem,
-        
-        # Add any other custom layers or functions used in your model
     }
     return custom_objects
-
 
 def load_region_model(region_name):
     filename = region_models[region_name]
