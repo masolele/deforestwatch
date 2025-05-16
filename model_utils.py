@@ -28,16 +28,22 @@ def get_region_from_roi(roi):
     return None
 
 def get_custom_objects():
-    """Register all custom layers and objects used in the model"""
+    """Register all custom layers and operations used in the model"""
+    def unpack_and_reshape(x):
+        """Custom function to handle unstack operation"""
+        return tf.unstack(x, axis=-1)
+    
     custom_objects = {
-        # Handle TensorFlow operation wrapper layers
+        # Handle TensorFlow operations in Lambda layers
         'TFOpLambda': tf.keras.layers.Lambda,
+        'unstack': unpack_and_reshape,  # Custom handler for unstack operation
         
         # Register your custom attention layers
         'Attention_UNetFusion3I': Attention_UNetFusion3I,
         'Attention_UNetFusion3I_Sentinel': Attention_UNetFusion3I_Sentinel,
         
-        # Add any other custom layers here
+        # Add any other custom operations here
+        'tf': tf,  # Provides access to all tf operations
     }
     return custom_objects
 
