@@ -15,4 +15,3 @@ opencv-python
 geopandas
 huggingface_hub
 requests
-python==3.10.14
