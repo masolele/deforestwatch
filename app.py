@@ -107,7 +107,8 @@ if output and "all_drawings" in output and output["all_drawings"]:
     gdf = gpd.GeoDataFrame(index=[0], geometry=[shp], crs="EPSG:4326")
 
     import geemap
-    roi = geemap.geopandas_to_ee(gdf)
+    roi_fc = geemap.geopandas_to_ee(gdf)
+    roi = roi_fc.geometry()
 
 if roi:
     region = get_region_from_roi(roi)
