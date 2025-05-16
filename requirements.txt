@@ -1,8 +1,8 @@
 
-markdown=3.4.1
-python=3.8
-tensorflow=2.10
-keras=2.10
+markdown==3.4.1
+python==3.8
+tensorflow==2.10
+keras==2.10
 numpy
 streamlit
 streamlit_folium
