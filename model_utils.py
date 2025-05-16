@@ -2,6 +2,8 @@ import os
 import ee
 from keras.models import load_model
 from huggingface_hub import hf_hub_download
+from tensorflow.keras.utils import custom_object_scope
+import tensorflow as tf
 
 # Region-to-model file names
 region_models = {
