@@ -3,7 +3,7 @@ streamlit_folium
 folium
 geemap
 earthengine-api
-tensorflow
+tensorflow==2.10.0
 datetime
 keras
 numpy
