@@ -1,4 +1,6 @@
 streamlit
+streamlit_folium
+folium
 geemap
 earthengine-api
 tensorflow
