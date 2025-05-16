@@ -17,15 +17,35 @@ from google.oauth2 import service_account
 # credentials = ee.ServiceAccountCredentials(service_account, key_data=private_key)
 # ee.Initialize(credentials)
 
-service_account_email = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
-private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
+# service_account_email = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
+# private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
 
-credentials = ee.ServiceAccountCredentials(
-    email=service_account_email,
-    key_data=private_key
-)
+# credentials = ee.ServiceAccountCredentials(
+#     email=service_account_email,
+#     key_data=private_key
+# )
 
-ee.Initialize(credentials)
+# ee.Initialize(credentials)
+
+# Earth Engine initialization with fail-safe
+try:
+    service_account_email = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
+    private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
+
+    credentials = ee.ServiceAccountCredentials(
+        email=service_account_email,
+        key_data=private_key
+    )
+
+    ee.Initialize(credentials)
+    st.sidebar.success("✅ Earth Engine authenticated")
+
+except Exception as e:
+    st.sidebar.error("❌ Earth Engine authentication failed.")
+    st.error(
+        "Earth Engine failed to initialize. Please make sure you've set the Earth Engine service account in your Streamlit secrets."
+    )
+    st.stop()
 
 st.set_page_config(layout="wide")
 st.title("🌍 Deforestation Land Use Prediction App")
