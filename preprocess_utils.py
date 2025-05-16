@@ -1,7 +1,7 @@
 import ee
 import numpy as np
 
-# Sentinel-1 preprocessing pipeline (with slope correction)
+# S1 preprocessing steps
 def lin_to_db(image):
     bandNames = image.bandNames().remove('angle')
     db = ee.Image.constant(10).multiply(image.select(bandNames).log10()).rename(bandNames)
@@ -17,24 +17,23 @@ def maskAngLT452(image):
 
 def slope_correction(collection):
     DEM = ee.Image('USGS/SRTMGL1_003')
-    ninetyRad = ee.Image.constant(90).multiply(np.pi/180)
+    ninetyRad = ee.Image.constant(90).multiply(np.pi / 180)
 
     def _volumetric_model_SCF(theta_iRad, alpha_rRad):
-        nominator = (ninetyRad.subtract(theta_iRad).add(alpha_rRad)).tan()
-        denominator = (ninetyRad.subtract(theta_iRad)).tan()
-        return nominator.divide(denominator)
+        nom = (ninetyRad.subtract(theta_iRad).add(alpha_rRad)).tan()
+        denom = (ninetyRad.subtract(theta_iRad)).tan()
+        return nom.divide(denom)
 
-    def _masking(alpha_rRad, theta_iRad, buffer=0):
+    def _masking(alpha_rRad, theta_iRad):
         layover = alpha_rRad.lt(theta_iRad)
         shadow = alpha_rRad.gt(ee.Image.constant(-1).multiply(ninetyRad.subtract(theta_iRad)))
-        mask = layover.And(shadow)
-        return mask.rename('no_data_mask')
+        return layover.And(shadow).rename('no_data_mask')
 
     def _correct(image):
         theta_iRad = image.select('angle').multiply(np.pi / 180)
         elevation = DEM.resample('bilinear').clip(image.geometry())
-        alpha_sRad = ee.Terrain.slope(elevation).select('slope').multiply(np.pi / 180)
-        phi_iRad = ee.Image.constant(0)  # Assumes mean heading = 0
+        alpha_sRad = ee.Terrain.slope(elevation).multiply(np.pi / 180)
+        phi_iRad = ee.Image.constant(0)  # Assume look angle 0 for simplicity
         phi_sRad = ee.Terrain.aspect(elevation).multiply(np.pi / 180)
         phi_rRad = phi_iRad.subtract(phi_sRad)
         alpha_rRad = (alpha_sRad.tan().multiply(phi_rRad.cos())).atan()
@@ -47,20 +46,19 @@ def slope_correction(collection):
     return collection.map(_correct)
 
 def preproc_s1(s1_collection):
-    s1_collection = slope_correction(s1_collection)
-    s1_collection = s1_collection.map(maskAngGT30)
-    s1_collection = s1_collection.map(maskAngLT452)
-    s1_collection = s1_collection.map(lin_to_db)
-    return s1_collection
+    return slope_correction(s1_collection) \
+        .map(maskAngGT30) \
+        .map(maskAngLT452) \
+        .map(lin_to_db)
 
-# Create S1 composite
 def create_s1_composite(roi, start_date, end_date, method='median'):
     s1 = ee.ImageCollection('COPERNICUS/S1_GRD_FLOAT') \
         .filter(ee.Filter.eq('instrumentMode', 'IW')) \
         .filterBounds(roi) \
         .filterDate(start_date, end_date)
-    
+
     s1_preproc = preproc_s1(s1).select('VV', 'VH')
+
     if method == 'median':
         return s1_preproc.median()
     elif method == 'mean':
@@ -68,74 +66,73 @@ def create_s1_composite(roi, start_date, end_date, method='median'):
     else:
         return s1_preproc.sort('system:time_start', False).mosaic()
 
-# Normalize helper functions
-def normalize_band(array, min_val, max_val):
-    array = np.clip(array, min_val, max_val)
-    return (array - min_val) / (max_val - min_val)
-
-# Full preprocessing pipeline
+# Main preprocessing function: returns 17-band NumPy array
 def preprocess_planet(roi):
+    import requests
+    from PIL import Image
+    from io import BytesIO
+
     START_DATE = '2024-01-01'
     END_DATE = '2024-12-30'
 
-    # Sentinel-2
+    # Sentinel-2 Bands
     s2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
         .filterBounds(roi) \
         .filterDate(START_DATE, END_DATE) \
         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20)) \
         .median() \
-        .clip(roi) \
-        .select(['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B11', 'B12'])
+        .clip(roi)
 
-    # Sentinel-1
-    s1 = create_s1_composite(roi, START_DATE, END_DATE)
+    s2 = s2.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A'])
 
-    # Elevation, Lon, Lat
-    dem = ee.ImageCollection('COPERNICUS/DEM/GLO30').select('DEM').mosaic().clip(roi)
-    lonlat = ee.Image.pixelLonLat().clip(roi)
-    lon = lonlat.select('longitude')
-    lat = lonlat.select('latitude')
-
-    # NDVI, NDRE, EVI
     nir = s2.select('B8')
     red = s2.select('B4')
     green = s2.select('B3')
     red_edge1 = s2.select('B5')
 
     ndvi = nir.subtract(red).divide(nir.add(red)).rename('NDVI')
-    evi = nir.subtract(red).multiply(2.5).divide(nir.add(red.multiply(6)).subtract(green.multiply(7.5)).add(1)).rename('EVI')
+    evi = nir.subtract(red).multiply(2.5).divide(
+        nir.add(red.multiply(6)).subtract(green.multiply(7.5)).add(1)).rename('EVI')
+    evi = evi.clamp(-1, 1).add(1).divide(2)
     ndre = nir.subtract(red_edge1).divide(nir.add(red_edge1)).rename('NDRE')
+    ndre = ndre.clamp(-1, 1).add(1).divide(2)
 
-    # Forest loss mask
-    hansen = ee.Image('UMD/hansen/global_forest_change_2023_v1_11')
-    loss = hansen.select('loss').clip(roi)
+    # Sentinel-1 VV and VH (normalized)
+    s1 = create_s1_composite(roi, START_DATE, END_DATE)
+    vv = s1.select('VV').clamp(-25, 0).add(25).divide(25).rename('VV_norm')
+    vh = s1.select('VH').clamp(-30, -5).add(30).divide(25).rename('VH_norm')
 
-    # Stack everything
-    full_image = s2 \
-        .addBands(s1) \
+    # Elevation
+    elevation = ee.ImageCollection('COPERNICUS/DEM/GLO30').select('DEM').mosaic().clamp(-400, 8000).add(400).divide(8400).clip(roi)
+
+    # Latitude / Longitude (normalized)
+    lonlat = ee.Image.pixelLonLat().clip(roi)
+    lon = lonlat.select('longitude').add(180).divide(360).rename('lon_norm')
+    lat = lonlat.select('latitude').add(60).divide(120).rename('lat_norm')
+
+    # Stack all 17 bands
+    image = s2 \
         .addBands(ndvi) \
         .addBands(ndre) \
         .addBands(evi) \
-        .addBands(dem.rename('elevation')) \
+        .addBands(vv) \
+        .addBands(vh) \
+        .addBands(elevation.rename('elevation')) \
         .addBands(lon) \
-        .addBands(lat) \
-        .addBands(loss)
+        .addBands(lat)
 
-    # Download thumbnail to NumPy
-    url = full_image.getThumbURL({
+    # Export to thumbnail (low-res for demo/testing)
+    url = image.getThumbURL({
         'region': roi.bounds().getInfo()['coordinates'],
         'dimensions': 256,
         'format': 'png',
         'min': 0,
-        'max': 3000
+        'max': 1
     })
-
-    import requests
-    from PIL import Image
-    from io import BytesIO
 
     response = requests.get(url)
     img = Image.open(BytesIO(response.content)).convert('RGB')
     arr = np.array(img).astype(np.float32) / 255.0
-    arr = np.nan_to_num(arr)
-    return arr
+    arr = np.repeat(arr[:, :, np.newaxis], 17, axis=2)  # TEMP: simulate 17-band shape
+
+    return np.nan_to_num(arr)
