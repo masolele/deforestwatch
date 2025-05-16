@@ -1,5 +1,6 @@
 import streamlit as st
 import ee
+import geemap
 from datetime import date
 import geemap.foliumap as geemap
 from PIL import Image
@@ -28,12 +29,16 @@ from google.oauth2 import service_account
 # ee.Initialize(credentials)
 
 # Earth Engine initialization with fail-safe
+#########
+# SERVICE_ACCOUNT_KEY = 'landuseJSON/land-use-292522-392b955456aa.json'
+# ee.Initialize(ee.ServiceAccountCredentials(None, SERVICE_ACCOUNT_KEY))
+####
 try:
     service_account_email = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
     private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
 
     credentials = ee.ServiceAccountCredentials(
-        email=service_account_email,
+        email=None,
         key_data=private_key
     )
 
