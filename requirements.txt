@@ -1,6 +1,6 @@
 python=3.8
-tensorflow
-keras
+tensorflow=2.10
+keras=2.10
 numpy
 streamlit
 streamlit_folium
