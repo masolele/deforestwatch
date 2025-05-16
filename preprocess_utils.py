@@ -75,7 +75,7 @@ def preprocess_planet(roi, start_date, end_date):
     # Sentinel-2 Bands
     s2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
         .filterBounds(roi) \
-        .filterDate(START_DATE, END_DATE) \
+        .filterDate(start_date, end_date) \
         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20)) \
         .median() \
         .clip(roi)
@@ -95,7 +95,7 @@ def preprocess_planet(roi, start_date, end_date):
     ndre = ndre.clamp(-1, 1).add(1).divide(2)
 
     # Sentinel-1 VV and VH (normalized)
-    s1 = create_s1_composite(roi, START_DATE, END_DATE)
+    s1 = create_s1_composite(roi, start_date, end_date)
     vv = s1.select('VV').clamp(-25, 0).add(25).divide(25).rename('VV_norm')
     vh = s1.select('VH').clamp(-30, -5).add(30).divide(25).rename('VH_norm')
 
