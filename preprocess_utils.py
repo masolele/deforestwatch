@@ -1,5 +1,8 @@
 import ee
 import numpy as np
+import requests
+from PIL import Image
+from io import BytesIO
 
 # S1 preprocessing steps
 def lin_to_db(image):
@@ -29,11 +32,26 @@ def slope_correction(collection):
         shadow = alpha_rRad.gt(ee.Image.constant(-1).multiply(ninetyRad.subtract(theta_iRad)))
         return layover.And(shadow).rename('no_data_mask')
 
+    # def _correct(image):
+    #     theta_iRad = image.select('angle').multiply(np.pi / 180)
+    #     elevation = DEM.resample('bilinear').clip(image.geometry())
+    #     alpha_sRad = ee.Terrain.slope(elevation).multiply(np.pi / 180)
+    #     phi_iRad = ee.Image.constant(0)  # Assume look angle 0 for simplicity
+    #     phi_sRad = ee.Terrain.aspect(elevation).multiply(np.pi / 180)
+    #     phi_rRad = phi_iRad.subtract(phi_sRad)
+    #     alpha_rRad = (alpha_sRad.tan().multiply(phi_rRad.cos())).atan()
+    #     gamma0 = image.divide(theta_iRad.cos())
+    #     scf = _volumetric_model_SCF(theta_iRad, alpha_rRad)
+    #     gamma0_flat = gamma0.multiply(scf)
+    #     mask = _masking(alpha_rRad, theta_iRad)
+        
+    #     return gamma0_flat.mask(mask).copyProperties(image, ["system:time_start"]).addBands(image.select('angle'))
+
     def _correct(image):
         theta_iRad = image.select('angle').multiply(np.pi / 180)
         elevation = DEM.resample('bilinear').clip(image.geometry())
         alpha_sRad = ee.Terrain.slope(elevation).multiply(np.pi / 180)
-        phi_iRad = ee.Image.constant(0)  # Assume look angle 0 for simplicity
+        phi_iRad = ee.Image.constant(0)
         phi_sRad = ee.Terrain.aspect(elevation).multiply(np.pi / 180)
         phi_rRad = phi_iRad.subtract(phi_sRad)
         alpha_rRad = (alpha_sRad.tan().multiply(phi_rRad.cos())).atan()
@@ -41,11 +59,13 @@ def slope_correction(collection):
         scf = _volumetric_model_SCF(theta_iRad, alpha_rRad)
         gamma0_flat = gamma0.multiply(scf)
         mask = _masking(alpha_rRad, theta_iRad)
-        
-        #return gamma0_flat.mask(mask).copyProperties(image, ["system:time_start"]).addBands(image.select('angle'))
-        
-        corrected = ee.Image(gamma0_flat.mask(mask)).copyProperties(image, ["system:time_start"]).addBands(image.select('angle'))
+
+        corrected = ee.Image(gamma0_flat.mask(mask)) \
+            .copyProperties(image, ["system:time_start"]) \
+            .addBands(image.select('angle'))
+
         return corrected
+    
         
 
     return collection.map(_correct)
