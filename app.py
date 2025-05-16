@@ -12,6 +12,7 @@ from preprocess_utils import preprocess_planet
 from huggingface_hub import hf_hub_download
 import os
 import json
+from google.oauth2 import service_account
 
 # Authenticate Earth Engine (Streamlit Cloud will use secrets.toml)
 # service_account = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
