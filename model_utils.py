@@ -4,7 +4,7 @@ from keras.models import load_model
 from huggingface_hub import hf_hub_download
 from tensorflow.keras.utils import custom_object_scope
 import tensorflow as tf
-from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
+from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel,gating_signal,repeat_elem,attention_block
 
 # Region-to-model file names
 region_models = {
