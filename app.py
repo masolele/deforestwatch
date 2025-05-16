@@ -17,6 +17,19 @@ ee.Initialize(credentials)
 st.set_page_config(layout="wide")
 st.title("🌍 Deforestation Land Use Prediction App")
 
+import streamlit as st
+from datetime import date
+
+# Add date selectors to sidebar
+st.sidebar.markdown("### 🗓️ Select Image Date Range")
+start_date = st.sidebar.date_input("Start date", value=date(2024, 1, 1))
+end_date = st.sidebar.date_input("End date", value=date(2024, 12, 30))
+
+if start_date >= end_date:
+    st.sidebar.error("Start date must be before end date.")
+    st.stop()
+
+
 # Upload or draw ROI
 st.sidebar.subheader("Upload ROI")
 uploaded_file = st.sidebar.file_uploader("Upload GeoJSON or zipped Shapefile", type=["geojson", "zip"])
