@@ -41,7 +41,12 @@ def slope_correction(collection):
         scf = _volumetric_model_SCF(theta_iRad, alpha_rRad)
         gamma0_flat = gamma0.multiply(scf)
         mask = _masking(alpha_rRad, theta_iRad)
-        return gamma0_flat.mask(mask).copyProperties(image, ["system:time_start"]).addBands(image.select('angle'))
+        
+        #return gamma0_flat.mask(mask).copyProperties(image, ["system:time_start"]).addBands(image.select('angle'))
+        
+        corrected = ee.Image(gamma0_flat.mask(mask)).copyProperties(image, ["system:time_start"]).addBands(image.select('angle'))
+        return corrected
+        
 
     return collection.map(_correct)
 
