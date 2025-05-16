@@ -12,3 +12,4 @@ scikit-image
 opencv-python
 geopandas
 huggingface_hub
+requests
