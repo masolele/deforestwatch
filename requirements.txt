@@ -3,7 +3,7 @@ streamlit_folium
 folium
 geemap
 earthengine-api
-tensorflow==2.10.0
+tensorflow
 datetime
 keras
 numpy
@@ -15,3 +15,4 @@ opencv-python
 geopandas
 huggingface_hub
 requests
+python==3.10.14
