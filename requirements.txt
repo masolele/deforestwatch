@@ -1,13 +1,13 @@
 python=3.10.13
+tensorflow==2.10
+keras==2.10
+numpy==1.26
 streamlit
 streamlit_folium
 folium
 geemap
 earthengine-api
-tensorflow==2.10.0
 datetime
-keras==2.10.0
-numpy==1.26.4
 pillow
 rasterio
 matplotlib
