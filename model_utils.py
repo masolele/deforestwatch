@@ -28,28 +28,28 @@ def get_region_from_roi(roi):
             return name
     return None
 
-# Custom layer registration
-def get_custom_objects():
-    """Register all custom layers and objects used in the model"""
-    def safe_unstack(x, num=None, axis=-1):
-        return tf.unstack(x, num=num, axis=axis)
+# # Custom layer registration
+# def get_custom_objects():
+#     """Register all custom layers and objects used in the model"""
+#     def safe_unstack(x, num=None, axis=-1):
+#         return tf.unstack(x, num=num, axis=axis)
     
-    custom_objects = {
-        # Register TensorFlow operations used in Lambda layers
-        'TFOpLambda': tf.keras.layers.Lambda,
-        'tf': tf,
-        'safe_unstack': safe_unstack,
+#     custom_objects = {
+#         # Register TensorFlow operations used in Lambda layers
+#         'TFOpLambda': tf.keras.layers.Lambda,
+#         'tf': tf,
+#         'safe_unstack': safe_unstack,
         
-        # Register your custom attention layers
-        'Attention_UNetFusion3I': Attention_UNetFusion3I,
-        'Attention_UNetFusion3I_Sentinel': Attention_UNetFusion3I_Sentinel,
+#         # Register your custom attention layers
+#         'Attention_UNetFusion3I': Attention_UNetFusion3I,
+#         'Attention_UNetFusion3I_Sentinel': Attention_UNetFusion3I_Sentinel,
         
-        # Register any other custom components
-        'gating_signal': gating_signal,
-        'attention_block': attention_block,
-        'repeat_elem': repeat_elem,
-    }
-    return custom_objects
+#         # Register any other custom components
+#         'gating_signal': gating_signal,
+#         'attention_block': attention_block,
+#         'repeat_elem': repeat_elem,
+#     }
+#     return custom_objects
 
 def load_region_model(region_name):
     filename = region_models[region_name]
@@ -61,9 +61,9 @@ def load_region_model(region_name):
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
 
-    #return load_model(model_path, compile=False)
+    return load_model(model_path, compile=False)
         # Load model with custom objects
-    with custom_object_scope(get_custom_objects()):
-        model = load_model(model_path, compile=False)
+    # with custom_object_scope(get_custom_objects()):
+    #     model = load_model(model_path, compile=False)
     
-    return model
+    # return model
