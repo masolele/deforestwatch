@@ -4,6 +4,7 @@ from keras.models import load_model
 from huggingface_hub import hf_hub_download
 from tensorflow.keras.utils import custom_object_scope
 import tensorflow as tf
+from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
 
 # Region-to-model file names
 region_models = {
@@ -26,12 +27,6 @@ def get_region_from_roi(roi):
             return name
     return None
 
-# Define custom objects (including TFOpLambda)
-def get_custom_objects():
-    return {
-        'TFOpLambda': tf.keras.layers.Lambda,  # Maps TFOpLambda to standard Lambda
-        # Add other custom layers here if needed
-    }
 
 def load_region_model(region_name):
     filename = region_models[region_name]
@@ -42,7 +37,5 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
-         # Load with custom objects
-    with custom_object_scope(get_custom_objects()):
-        return load_model(model_path, compile=False)
-    #return load_model(model_path, compile=False)
+
+    return load_model(model_path, compile=False)
