@@ -67,13 +67,10 @@ def create_s1_composite(roi, start_date, end_date, method='median'):
         return s1_preproc.sort('system:time_start', False).mosaic()
 
 # Main preprocessing function: returns 17-band NumPy array
-def preprocess_planet(roi):
+def preprocess_planet(roi, start_date, end_date):
     import requests
     from PIL import Image
     from io import BytesIO
-
-    START_DATE = '2024-01-01'
-    END_DATE = '2024-12-30'
 
     # Sentinel-2 Bands
     s2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
