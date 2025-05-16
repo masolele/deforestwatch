@@ -6,5 +6,7 @@ keras
 numpy
 pillow
 rasterio
+matplotlib
 scikit-image
+opencv-python
 geopandas
