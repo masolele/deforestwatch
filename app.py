@@ -1,5 +1,6 @@
 import streamlit as st
 import ee
+from datetime import date
 import geemap.foliumap as geemap
 from PIL import Image
 import numpy as np
@@ -16,9 +17,6 @@ ee.Initialize(credentials)
 
 st.set_page_config(layout="wide")
 st.title("🌍 Deforestation Land Use Prediction App")
-
-import streamlit as st
-from datetime import date
 
 # Add date selectors to sidebar
 st.sidebar.markdown("### 🗓️ Select Image Date Range")
