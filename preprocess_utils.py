@@ -33,24 +33,32 @@ def slope_correction(collection):
         return layover.And(shadow).rename('no_data_mask')
 
     def _correct(image):
-        theta_iRad = image.select('angle').multiply(np.pi / 180)
-        elevation = DEM.resample('bilinear').clip(image.geometry())
-        alpha_sRad = ee.Terrain.slope(elevation).multiply(np.pi / 180)
-        phi_iRad = ee.Image.constant(0)
-        phi_sRad = ee.Terrain.aspect(elevation).multiply(np.pi / 180)
-        phi_rRad = phi_iRad.subtract(phi_sRad)
-        alpha_rRad = (alpha_sRad.tan().multiply(phi_rRad.cos())).atan()
-        gamma0 = image.divide(theta_iRad.cos())
-        scf = _volumetric_model_SCF(theta_iRad, alpha_rRad)
-        gamma0_flat = gamma0.multiply(scf)
-        mask = _masking(alpha_rRad, theta_iRad)
+        try:
+            theta_iRad = image.select('angle').multiply(np.pi / 180)
+            elevation = DEM.resample('bilinear').clip(image.geometry())
+            alpha_sRad = ee.Terrain.slope(elevation).multiply(np.pi / 180)
+            phi_iRad = ee.Image.constant(0)
+            phi_sRad = ee.Terrain.aspect(elevation).multiply(np.pi / 180)
+            phi_rRad = phi_iRad.subtract(phi_sRad)
+            alpha_rRad = (alpha_sRad.tan().multiply(phi_rRad.cos())).atan()
+            gamma0 = image.divide(theta_iRad.cos())
+            scf = (ninetyRad.subtract(theta_iRad).add(alpha_rRad)).tan().divide(
+                (ninetyRad.subtract(theta_iRad)).tan()
+            )
+            gamma0_flat = gamma0.multiply(scf)
+            mask = alpha_rRad.lt(theta_iRad).And(
+                alpha_rRad.gt(ee.Image.constant(-1).multiply(ninetyRad.subtract(theta_iRad)))
+            )
     
-        corrected = ee.Image(gamma0_flat.mask(mask)) \
-            .copyProperties(image, ["system:time_start"]) \
-            .addBands(image.select('angle'))
-    
-        return corrected
+            # Explicit cast to ee.Image at each step
+            gamma0_masked = ee.Image(gamma0_flat.mask(mask))
+            angle_band = image.select('angle')
+            result = gamma0_masked.addBands(angle_band)
+            return result.copyProperties(image, ["system:time_start"])
         
+        except Exception as e:
+            print("❌ Error inside _correct():", str(e))
+            return ee.Image.constant(0).rename(['VV', 'VH', 'angle'])  # failsafe image
 
     return collection.map(_correct)
 
