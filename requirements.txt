@@ -1,4 +1,4 @@
-tensorflow==2.14
+tensorflow==2.16
 keras==2.14
 numpy==1.24.3
 streamlit
