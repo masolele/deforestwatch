@@ -10,7 +10,7 @@ from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3
 
 # Region-to-model file names
 region_models = {
-    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.keras',
+    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.hdf5',
     'Asia': 'best_weights_VIT_FusionSEA.hdf5',
     'Latin America': 'best_weights_VIT_FusionSA1.hdf5'
 }
