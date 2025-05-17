@@ -1,5 +1,5 @@
-keras
-tensorflow
+keras==2.11
+tensorflow==2.11
 numpy
 streamlit
 streamlit_folium
