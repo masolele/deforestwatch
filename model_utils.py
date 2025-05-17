@@ -52,11 +52,10 @@ def get_region_from_roi(roi):
 #     }
 #     return custom_objects
 
-def repeat_axis3(x, repnum):
-    return K.repeat_elements(x, repnum, axis=3)
-
-def repeat_elem(tensor, rep):
-    return layers.Lambda(repeat_axis3, arguments={'repnum': rep})(tensor)
+# Define dummy fallback if the Lambda logic is unavailable
+class TFOpLambda(tf.keras.layers.Layer):
+    def call(self, inputs):
+        return inputs  # fallback if Lambda logic cannot be restored
 
 def load_region_model(region_name):
     filename = region_models[region_name]
@@ -67,9 +66,12 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
+    # ✅ Register the missing 'TFOpLambda' layer name
     with custom_object_scope({
-       'repeat_axis3': repeat_axis3
+        'TFOpLambda': TFOpLambda
     }):
         model = load_model(model_path, compile=False)
+
+    return model
 
     #return load_model(model_path, compile=False)
