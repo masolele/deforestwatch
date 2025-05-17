@@ -60,10 +60,8 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
+    return load_model(model_path, compile=False, custom_objects={
+        'TFOpLambda': tf.keras.layers.Lambda  # register the missing class
+    })
 
-    return load_model(model_path, compile=False)
-        # Load model with custom objects
-    # with custom_object_scope(get_custom_objects()):
-    #     model = load_model(model_path, compile=False)
-    
-    # return model
+    #return load_model(model_path, compile=False)
