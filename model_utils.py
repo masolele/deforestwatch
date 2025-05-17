@@ -29,33 +29,42 @@ def get_region_from_roi(roi):
             return name
     return None
 
-# # Custom layer registration
-# def get_custom_objects():
-#     """Register all custom layers and objects used in the model"""
-#     def safe_unstack(x, num=None, axis=-1):
-#         return tf.unstack(x, num=num, axis=axis)
-    
-#     custom_objects = {
-#         # Register TensorFlow operations used in Lambda layers
-#         'TFOpLambda': tf.keras.layers.Lambda,
-#         'tf': tf,
-#         'safe_unstack': safe_unstack,
-        
-#         # Register your custom attention layers
-#         'Attention_UNetFusion3I': Attention_UNetFusion3I,
-#         'Attention_UNetFusion3I_Sentinel': Attention_UNetFusion3I_Sentinel,
-        
-#         # Register any other custom components
-#         'gating_signal': gating_signal,
-#         'attention_block': attention_block,
-#         'repeat_elem': repeat_elem,
-#     }
-#     return custom_objects
+# ✅ Step 1: Map known functions
+FUNCTION_MAP = {
+    'unstack': tf.unstack,
+    'squeeze': tf.squeeze,
+    # Add others if needed...
+}
 
-# Define dummy fallback if the Lambda logic is unavailable
+# ✅ Step 2: Dynamic Lambda loader
+def dynamic_lambda(function):
+    if function in FUNCTION_MAP:
+        return tf.keras.layers.Lambda(FUNCTION_MAP[function])
+    else:
+        raise ValueError(f"Unsupported Lambda function: {function}")
+        
+# Custom handler for TFOpLambda during deserialization
 class TFOpLambda(tf.keras.layers.Layer):
+    def __init__(self, function=None, **kwargs):
+        super().__init__(**kwargs)
+        self.function_name = function
+        if function not in FUNCTION_MAP:
+            raise ValueError(f"Unsupported TFOpLambda function: {function}")
+        self.fn = FUNCTION_MAP[function]
+
     def call(self, inputs):
-        return inputs  # fallback if Lambda logic cannot be restored
+        return self.fn(inputs)
+
+    def get_config(self):
+        return {
+            'function': self.function_name,
+            **super().get_config()
+        }
+
+# # Define dummy fallback if the Lambda logic is unavailable
+# class TFOpLambda(tf.keras.layers.Layer):
+#     def call(self, inputs):
+#         return inputs  # fallback if Lambda logic cannot be restored
 
 def load_region_model(region_name):
     filename = region_models[region_name]
@@ -66,12 +75,17 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
-    # ✅ Register the missing 'TFOpLambda' layer name
-    with custom_object_scope({
-        'TFOpLambda': TFOpLambda
-    }):
+    with custom_object_scope({'TFOpLambda': TFOpLambda}):
         model = load_model(model_path, compile=False)
-
     return model
+
+
+    # # ✅ Register the missing 'TFOpLambda' layer name
+    # with custom_object_scope({
+    #     'TFOpLambda': TFOpLambda
+    # }):
+    #     model = load_model(model_path, compile=False)
+
+    # return model
 
     #return load_model(model_path, compile=False)
