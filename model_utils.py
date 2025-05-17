@@ -10,7 +10,7 @@ from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3
 
 # Region-to-model file names
 region_models = {
-    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.hdf5',
+    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.keras',
     'Asia': 'best_weights_VIT_FusionSEA.hdf5',
     'Latin America': 'best_weights_VIT_FusionSA1.hdf5'
 }
@@ -29,38 +29,6 @@ def get_region_from_roi(roi):
             return name
     return None
 
-# ✅ Step 1: Map known functions
-FUNCTION_MAP = {
-    'unstack': tf.unstack,
-    'squeeze': tf.squeeze,
-    # Add others if needed...
-}
-
-# ✅ Step 2: Dynamic Lambda loader
-def dynamic_lambda(function):
-    if function in FUNCTION_MAP:
-        return tf.keras.layers.Lambda(FUNCTION_MAP[function])
-    else:
-        raise ValueError(f"Unsupported Lambda function: {function}")
-        
-# Custom handler for TFOpLambda during deserialization
-class TFOpLambda(tf.keras.layers.Layer):
-    def __init__(self, function=None, **kwargs):
-        super().__init__(**kwargs)
-        self.function_name = function
-        if function not in FUNCTION_MAP:
-            raise ValueError(f"Unsupported TFOpLambda function: {function}")
-        self.fn = FUNCTION_MAP[function]
-
-    def call(self, inputs):
-        return self.fn(inputs)
-
-    def get_config(self):
-        return {
-            'function': self.function_name,
-            **super().get_config()
-        }
-
 # # Define dummy fallback if the Lambda logic is unavailable
 # class TFOpLambda(tf.keras.layers.Layer):
 #     def call(self, inputs):
@@ -75,17 +43,4 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
-    with custom_object_scope({'TFOpLambda': TFOpLambda}):
-        model = load_model(model_path, compile=False)
-    return model
-
-
-    # # ✅ Register the missing 'TFOpLambda' layer name
-    # with custom_object_scope({
-    #     'TFOpLambda': TFOpLambda
-    # }):
-    #     model = load_model(model_path, compile=False)
-
-    # return model
-
-    #return load_model(model_path, compile=False)
+    return load_model(model_path, compile=False)
