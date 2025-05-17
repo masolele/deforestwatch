@@ -70,6 +70,6 @@ def load_region_model(region_name):
     with custom_object_scope({
        'repeat_axis3': repeat_axis3
     }):
-        model = load_model(path, compile=False)
+        model = load_model(model_path, compile=False)
 
     #return load_model(model_path, compile=False)
