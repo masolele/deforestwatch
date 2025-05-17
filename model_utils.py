@@ -43,4 +43,4 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
-    return load_model(model_path, compile=False)
+    return tf.keras.models.load_model(model_path, compile=False)
