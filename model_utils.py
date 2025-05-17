@@ -6,7 +6,7 @@ from tensorflow.keras.utils import custom_object_scope
 import tensorflow as tf
 from tensorflow.keras import layers
 from keras.utils import get_custom_objects
-#from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel,gating_signal,repeat_elem,attention_block
+from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
 
 # Region-to-model file names
 region_models = {
@@ -52,6 +52,12 @@ def get_region_from_roi(roi):
 #     }
 #     return custom_objects
 
+def repeat_axis3(x, repnum):
+    return K.repeat_elements(x, repnum, axis=3)
+
+def repeat_elem(tensor, rep):
+    return layers.Lambda(repeat_axis3, arguments={'repnum': rep})(tensor)
+
 def load_region_model(region_name):
     filename = region_models[region_name]
 
@@ -61,8 +67,9 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
-    return load_model(model_path, compile=False, custom_objects={
-        'TFOpLambda': tf.keras.layers.Lambda  # register the missing class
-    })
+    with custom_object_scope({
+       'repeat_axis3': repeat_axis3
+    }):
+        model = load_model(path, compile=False)
 
     #return load_model(model_path, compile=False)
