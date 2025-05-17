@@ -35,6 +35,7 @@ def get_region_from_roi(roi):
 #         return inputs  # fallback if Lambda logic cannot be restored
 
 def load_region_model(region_name):
+    from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
     filename = region_models[region_name]
 
     model_path = hf_hub_download(
