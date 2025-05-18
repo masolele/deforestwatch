@@ -32,8 +32,8 @@ def get_region_from_roi(roi):
 
 custom_objects = {
     "TFOpLambda": Lambda,
-    "tf.unstack": tf.unstack(:, axis=-1),
-    "tf.stack": tf.unstack([:, axis=-1)
+    "tf.unstack": tf.unstack,
+    "tf.stack": tf.unstack
 }
 def load_region_model(region_name):
     filename = region_models[region_name]
