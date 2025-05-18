@@ -5,6 +5,7 @@ from huggingface_hub import hf_hub_download
 from tensorflow.keras.utils import custom_object_scope
 import tensorflow as tf
 from tensorflow.keras import layers
+from tensorflow.keras.layers import Lambda
 from keras.utils import get_custom_objects
 from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
 
@@ -29,13 +30,10 @@ def get_region_from_roi(roi):
             return name
     return None
 
-# # Define dummy fallback if the Lambda logic is unavailable
-# class TFOpLambda(tf.keras.layers.Layer):
-#     def call(self, inputs):
-#         return inputs  # fallback if Lambda logic cannot be restored
-
+custom_objects = {
+    "TFOpLambda": Lambda,
+}
 def load_region_model(region_name):
-    from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
     filename = region_models[region_name]
 
     model_path = hf_hub_download(
@@ -44,5 +42,6 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
-    return load_model(model_path, compile=False)
+    #return load_model(model_path, compile=False)
+    return load_model(model_path, compile=False, custom_objects=custom_objects)
     
