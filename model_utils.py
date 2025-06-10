@@ -89,7 +89,7 @@ custom_objects = {
     'TFOpLambda': Lambda,
 }
 
-@register_keras_serializable()
+#@register_keras_serializable()
 class PositionEmbedding(layers.Layer):
     def __init__(self, num_patches, embed_dim):
         super(PositionEmbedding, self).__init__()
