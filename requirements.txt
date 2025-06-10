@@ -5,7 +5,6 @@ geemap>=0.20.0
 streamlit
 streamlit_folium
 folium
-geemap
 earthengine-api
 datetime
 pillow
