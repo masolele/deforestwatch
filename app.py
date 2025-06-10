@@ -17,6 +17,7 @@ from streamlit_folium import st_folium
 import folium
 from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
 from smooth_tiled_predictions import predict_img_with_smooth_windowing
+from production_ready_script import LargeImagePredictor
 
 # Authenticate Earth Engine (Streamlit Cloud will use secrets.toml)
 # service_account = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
@@ -127,14 +128,16 @@ if roi:
             model = load_region_model(region)
             #input_tensor = np.expand_dims(x_img, axis=0)
             #pred = model.predict(input_tensor)[0]
-            pred = predict_img_with_smooth_windowing(
-                x_img,
-                window_size=patch_size,
+            predictor = LargeImagePredictor(
+                model,
+                patch_size=patch_size,
+                overlap =32,
                 subdivisions=2,  # Minimal amount of overlap for windowing. Must be an even number.
-                nb_classes=n_classes,
-                pred_func=(
-                    lambda img_batch_subdiv: model.predict_on_batch(img_batch_subdiv)))
+                batch_size = 8
+            )
+            pred = predictor.predict_large_image(x_img)
             pred_classes = np.argmax(pred, axis=-1).astype(np.uint8)
+            print("Prediction completed. Output shape:", pred_classes.shape)
 
             # Color map
             # color_map = {
