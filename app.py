@@ -132,7 +132,6 @@ if roi:
                 model,
                 patch_size=patch_size,
                 overlap =32,
-                subdivisions=2,  # Minimal amount of overlap for windowing. Must be an even number.
                 batch_size = 8
             )
             pred = predictor.predict_large_image(x_img)
