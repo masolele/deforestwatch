@@ -3,6 +3,7 @@ import geemap
 import os
 import rasterio
 from rasterio.merge import merge
+import numpy as np
 
 def chunked_export(image, roi, output_path, scale=10, max_size_mb=50):
     """
