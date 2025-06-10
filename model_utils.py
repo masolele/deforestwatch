@@ -8,12 +8,13 @@ from tensorflow.keras import layers
 from tensorflow.keras.layers import Lambda
 from keras.utils import get_custom_objects
 from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
+from keras.saving import register_keras_serializable
 
 # Region-to-model file names
 region_models = {
-    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.hdf5',
-    'Asia': 'best_weights_VIT_FusionSEA.hdf5',
-    'Latin America': 'best_weights_VIT_FusionSA1.hdf5'
+    'Africa': 'best_weights_VIT_FusionAFR.keras', #'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.hdf5',
+    'Asia': 'best_weights_VIT_FusionSEA1.keras',
+    'Latin America': 'best_weights_VIT_FusionSA7.keras'
 }
 
 # Bounding boxes for region detection
