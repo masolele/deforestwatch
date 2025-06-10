@@ -152,7 +152,7 @@ def preprocess_planet(roi, start_date, end_date):
     #                        region=roi.bounds()
     #                       )
     chunked_export(image=image,
-                   roi =roi#.bounds()
+                   roi =roi, #.bounds()
                    output_path= 'clipped.tif',
                    scale=10
                           )
