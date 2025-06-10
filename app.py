@@ -16,6 +16,7 @@ from google.oauth2 import service_account
 from streamlit_folium import st_folium
 import folium
 from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
+from smooth_tiled_predictions import predict_img_with_smooth_windowing
 
 # Authenticate Earth Engine (Streamlit Cloud will use secrets.toml)
 # service_account = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
