@@ -3,6 +3,7 @@ import numpy as np
 import requests
 from PIL import Image
 from io import BytesIO
+from skimage import io
 
 # S1 preprocessing steps
 def lin_to_db(image):
@@ -136,17 +137,25 @@ def preprocess_planet(roi, start_date, end_date):
         .addBands(lat)
 
     # Export to thumbnail (low-res for demo/testing)
-    url = image.getThumbURL({
-        'region': roi.bounds().getInfo()['coordinates'],
-        'dimensions': 256,
-        'format': 'png',
-        'min': 0,
-        'max': 1
-    })
 
-    response = requests.get(url)
-    img = Image.open(BytesIO(response.content))#.convert('RGB')
-    arr = np.array(img).astype(np.float32) / 255.0
+    geemap.ee_export_image(image,
+                           filename= 'clipped.tif',
+                           scale=10,
+                           region=feat.bounds()
+                          )
+     arr = io.imread('clipped.tif') 
+    
+    # url = image.getThumbURL({
+    #     'region': roi.bounds().getInfo()['coordinates'],
+    #     'dimensions': 256,
+    #     'format': 'png',
+    #     'min': 0,
+    #     'max': 1
+    # })
+
+    # response = requests.get(url)
+    # img = Image.open(BytesIO(response.content))#.convert('RGB')
+    # arr = np.array(img).astype(np.float32) / 255.0
     #arr = np.repeat(arr[:, :, np.newaxis], 17, axis=2)  # TEMP: simulate 17-band shape
 
     return np.nan_to_num(arr)
