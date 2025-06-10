@@ -125,6 +125,7 @@ if roi:
     if st.button("Run Prediction"):
         with st.spinner("Processing and predicting..."):
             x_img = preprocess_planet(roi, str(start_date), str(end_date))  # Should return shape (H, W, 17)
+            print(x_img.shape, 'image shape')
             model = load_region_model(region)
             #input_tensor = np.expand_dims(x_img, axis=0)
             #pred = model.predict(input_tensor)[0]
