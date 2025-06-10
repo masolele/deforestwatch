@@ -6,6 +6,7 @@ from io import BytesIO
 from skimage import io
 import geemap
 import os
+from chunked_download import chunked_export
 
 # S1 preprocessing steps
 def lin_to_db(image):
@@ -143,11 +144,18 @@ def preprocess_planet(roi, start_date, end_date):
 
    # print output to the console
     print(current_working_directory, 'working direct')
-    geemap.ee_export_image(image,
-                           filename= 'clipped.tif',
-                           scale=10,
-                           region=roi.bounds()
+    # geemap.ee_export_image(image,
+    #                        filename= 'clipped.tif',
+    #                        scale=10,
+    #                        region=roi.bounds()
+    #                       )
+    chunked_export(image=image,
+                   roi =roi#.bounds()
+                   output_path= 'clipped.tif',
+                   scale=10
                           )
+
+    
     arr = io.imread('clipped.tif') 
     
     return np.nan_to_num(arr)
