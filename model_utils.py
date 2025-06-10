@@ -85,7 +85,8 @@ custom_objects = {
     'stack_channels3': stack_channels3,
     # Include any other custom functions used in your model
     #'gating_signal': gating_signal,
-    'attention_block': attention_block
+    'attention_block': attention_block,
+    'TFOpLambda': Lambda,
 }
 
 @register_keras_serializable()
