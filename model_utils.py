@@ -10,6 +10,7 @@ from keras.utils import get_custom_objects
 from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
 from keras.saving import register_keras_serializable
 import tensorflow.keras.backend as K
+from smooth_tiled_predictions import predict_img_with_smooth_windowing
 
 # Region-to-model file names
 region_models = {
