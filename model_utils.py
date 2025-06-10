@@ -41,7 +41,7 @@ def unstack_channels(x, num=15, axis=-1):
 def stack_channels1(channels):
     return tf.stack([channels[0], channels[1], channels[2], channels[3], 
                    channels[4], channels[5], channels[6], channels[7],
-                   channels[8], channels[9],, channels[10], channels[11]], axis=-1)
+                   channels[8], channels[9], channels[10], channels[11]], axis=-1)
 
 def stack_channels2(channels):
     return tf.stack([channels[12], channels[13]], axis=-1)
