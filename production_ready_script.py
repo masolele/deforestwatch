@@ -1,9 +1,7 @@
 import numpy as np
 from skimage.util import view_as_windows
-from skimage.transform import resize
 import tensorflow as tf
 from tqdm import tqdm
-import cv2
 from scipy.ndimage import gaussian_filter
 
 class LargeImagePredictor:
@@ -31,9 +29,9 @@ class LargeImagePredictor:
         pad_h = (self.patch_size - image.shape[0] % self.step) % self.step
         pad_w = (self.patch_size - image.shape[1] % self.step) % self.step
         padded_img = np.pad(image, 
-                          (self.overlap, pad_h + self.overlap),
+                          ((self.overlap, pad_h + self.overlap),
                           (self.overlap, pad_w + self.overlap),
-                          (0, 0),
+                          (0, 0)),
                           mode='reflect')
         
         # 2. Extract overlapping patches
