@@ -130,13 +130,22 @@ if roi:
             model = load_region_model(region)
             #input_tensor = np.expand_dims(x_img, axis=0)
             #pred = model.predict(input_tensor)[0]
-            predictor = LargeImagePredictor(
-                model,
-                patch_size=patch_size,
-                overlap =32,
-                batch_size = 8
+            # predictor = LargeImagePredictor(
+            #     model,
+            #     patch_size=patch_size,
+            #     overlap =32,
+            #     batch_size = 8
+            # )
+            pred = predict_img_with_smooth_windowing(
+                x_img,
+                window_size=patch_size,
+                subdivisions=2,  # Minimal amount of overlap for windowing. Must be an even number.
+                nb_classes=n_classes,
+                pred_func=(
+                    lambda img_batch_subdiv: model.predict_on_batch(img_batch_subdiv)
+                )
             )
-            pred = predictor.predict_large_image(x_img)
+            #pred = predictor.predict_large_image(x_img)
             pred_classes = np.argmax(pred, axis=-1).astype(np.uint8)
             print("Prediction completed. Output shape:", pred_classes.shape)
 
