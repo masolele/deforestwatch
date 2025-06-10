@@ -1,4 +1,5 @@
-tensorflow
+tensorflow==2.10.0  # Matches your model's requirements
+keras==2.10.0
 numpy
 streamlit
 streamlit_folium
