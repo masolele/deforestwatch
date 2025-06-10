@@ -8,12 +8,12 @@ from tensorflow.keras import layers
 from tensorflow.keras.layers import Lambda
 from keras.utils import get_custom_objects
 from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
-#from keras.saving import register_keras_serializable
+from keras.saving import register_keras_serializable
 import tensorflow.keras.backend as K
 
 # Region-to-model file names
 region_models = {
-    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.keras', #best_weights_VIT_FusionAFR2.keras
+    'Africa': 'best_weights_VIT_FusionAFR.keras', #'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.keras', #best_weights_VIT_FusionAFR2.keras
     'Asia': 'best_weights_VIT_FusionSEA1.keras',
     'Latin America': 'best_weights_VIT_FusionSA7.keras'
 }
@@ -89,7 +89,7 @@ custom_objects = {
     'TFOpLambda': Lambda,
 }
 
-#@register_keras_serializable()
+@register_keras_serializable()
 class PositionEmbedding(layers.Layer):
     def __init__(self, num_patches, embed_dim):
         super(PositionEmbedding, self).__init__()
@@ -112,7 +112,7 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
-    return load_model(model_path, compile=False)
+    #return load_model(model_path, compile=False)
     #return load_model(model_path, compile=False, custom_objects=custom_objects)
-    #return load_model(model_path, compile=False, custom_objects={'PositionEmbedding': PositionEmbedding})
+    return load_model(model_path, compile=False, custom_objects={'PositionEmbedding': PositionEmbedding})
     
