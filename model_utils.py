@@ -13,7 +13,7 @@ import tensorflow.keras.backend as K
 
 # Region-to-model file names
 region_models = {
-    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.hdf5', #best_weights_VIT_FusionAFR2.keras
+    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.keras', #best_weights_VIT_FusionAFR2.keras
     'Asia': 'best_weights_VIT_FusionSEA1.keras',
     'Latin America': 'best_weights_VIT_FusionSA7.keras'
 }
@@ -112,7 +112,7 @@ def load_region_model(region_name):
         repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
-    #return load_model(model_path, compile=False)
-    return load_model(model_path, compile=False, custom_objects=custom_objects)
+    return load_model(model_path, compile=False)
+    #return load_model(model_path, compile=False, custom_objects=custom_objects)
     #return load_model(model_path, compile=False, custom_objects={'PositionEmbedding': PositionEmbedding})
     
