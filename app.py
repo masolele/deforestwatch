@@ -98,6 +98,8 @@ draw.add_to(m)
 
 output = st_folium(m, height=500, width=700)
 
+patch_size = 64
+n_classes = 25
 roi = None
 if output and "all_drawings" in output and output["all_drawings"]:
     from shapely.geometry import shape
@@ -122,8 +124,15 @@ if roi:
         with st.spinner("Processing and predicting..."):
             x_img = preprocess_planet(roi, str(start_date), str(end_date))  # Should return shape (H, W, 17)
             model = load_region_model(region)
-            input_tensor = np.expand_dims(x_img, axis=0)
-            pred = model.predict(input_tensor)[0]
+            #input_tensor = np.expand_dims(x_img, axis=0)
+            #pred = model.predict(input_tensor)[0]
+            pred = predict_img_with_smooth_windowing(
+                x_img,
+                window_size=patch_size,
+                subdivisions=2,  # Minimal amount of overlap for windowing. Must be an even number.
+                nb_classes=n_classes,
+                pred_func=(
+                    lambda img_batch_subdiv: model.predict_on_batch(img_batch_subdiv)))
             pred_classes = np.argmax(pred, axis=-1).astype(np.uint8)
 
             # Color map
