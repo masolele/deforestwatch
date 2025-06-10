@@ -4,6 +4,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 from skimage import io
+import geemap
 
 # S1 preprocessing steps
 def lin_to_db(image):
