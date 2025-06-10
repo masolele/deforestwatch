@@ -35,6 +35,20 @@ custom_objects = {
     "TFOpLambda": Lambda,
 }
 
+@register_keras_serializable()
+class PositionEmbedding(layers.Layer):
+    def __init__(self, num_patches, embed_dim):
+        super(PositionEmbedding, self).__init__()
+        self.position_embedding = self.add_weight(
+            shape=(1, num_patches, embed_dim),
+            initializer='random_normal',
+            trainable=True,
+            name="pos_embedding"
+        )
+
+    def call(self, x):
+        return x + self.position_embedding
+
 def load_region_model(region_name):
     filename = region_models[region_name]
 
