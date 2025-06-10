@@ -1,3 +1,6 @@
+[tool.streamlit]
+python_version = "3.10"
+
 [theme]
 primaryColor = "#228B22"
 backgroundColor = "#F8F9FA"
