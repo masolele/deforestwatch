@@ -19,6 +19,7 @@ from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3
 from smooth_tiled_predictions import predict_img_with_smooth_windowing
 from production_ready_script import LargeImagePredictor
 
+
 # Authenticate Earth Engine (Streamlit Cloud will use secrets.toml)
 # service_account = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
 # private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
