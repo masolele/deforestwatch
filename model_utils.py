@@ -1,6 +1,6 @@
 import os
 import ee
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 from huggingface_hub import hf_hub_download
 from tensorflow.keras.utils import custom_object_scope
 import tensorflow as tf
