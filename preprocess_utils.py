@@ -5,6 +5,7 @@ from PIL import Image
 from io import BytesIO
 from skimage import io
 import geemap
+import os
 
 # S1 preprocessing steps
 def lin_to_db(image):
@@ -138,7 +139,10 @@ def preprocess_planet(roi, start_date, end_date):
         .addBands(lat)
 
     # Export to thumbnail (low-res for demo/testing)
+    current_working_directory = os.getcwd()
 
+   # print output to the console
+    print(current_working_directory, 'working direct')
     geemap.ee_export_image(image,
                            filename= 'clipped.tif',
                            scale=10,
