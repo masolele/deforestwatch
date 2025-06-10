@@ -32,8 +32,31 @@ def get_region_from_roi(roi):
             return name
     return None
 
-custom_objects = {
+custom_objectslamda = {
     "TFOpLambda": Lambda,
+}
+def unstack_channels(x, num=15, axis=-1):
+    return tf.unstack(x, num=num, axis=axis)
+
+def stack_channels1(channels):
+    return tf.stack([channels[0], channels[1], channels[2], channels[3], 
+                   channels[4], channels[5], channels[6], channels[7],
+                   channels[8], channels[9],, channels[10], channels[11]], axis=-1)
+
+def stack_channels2(channels):
+    return tf.stack([channels[12], channels[13]], axis=-1)
+
+def stack_channels3(channels):
+    return tf.stack([channels[14], channels[15], channels[16]], axis=-1)
+
+custom_objects = {
+    'unstack_channels': unstack_channels,
+    'stack_channels1': stack_channels1,
+    'stack_channels2': stack_channels2,
+    'stack_channels3': stack_channels3,
+    # Include any other custom functions used in your model
+    'gating_signal': gating_signal,
+    'attention_block': attention_block
 }
 
 @register_keras_serializable()
