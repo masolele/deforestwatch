@@ -7,6 +7,8 @@ from skimage import io
 import geemap
 import os
 from chunked_download import chunked_export
+import rasterio
+from rasterio.merge import merge
 
 # S1 preprocessing steps
 def lin_to_db(image):
