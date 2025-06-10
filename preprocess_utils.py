@@ -143,7 +143,9 @@ def preprocess_planet(roi, start_date, end_date):
                            scale=10,
                            region=feat.bounds()
                           )
-     arr = io.imread('clipped.tif') 
+    arr = io.imread('clipped.tif') 
+    
+    return np.nan_to_num(arr)
     
     # url = image.getThumbURL({
     #     'region': roi.bounds().getInfo()['coordinates'],
@@ -158,4 +160,4 @@ def preprocess_planet(roi, start_date, end_date):
     # arr = np.array(img).astype(np.float32) / 255.0
     #arr = np.repeat(arr[:, :, np.newaxis], 17, axis=2)  # TEMP: simulate 17-band shape
 
-    return np.nan_to_num(arr)
+    #return np.nan_to_num(arr)
