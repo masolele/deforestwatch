@@ -9,6 +9,7 @@ from tensorflow.keras.layers import Lambda
 from keras.utils import get_custom_objects
 from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
 from keras.saving import register_keras_serializable
+import tensorflow.keras.backend as K
 
 # Region-to-model file names
 region_models = {
@@ -59,5 +60,5 @@ def load_region_model(region_name):
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
     #return load_model(model_path, compile=False)
-    return load_model(model_path, compile=False)
+    return load_model(model_path, compile=False, custom_objects={'PositionEmbedding': PositionEmbedding})
     
