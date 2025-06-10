@@ -147,7 +147,8 @@ if roi:
             )
             #pred = predictor.predict_large_image(x_img)
             pred_classes = np.argmax(pred, axis=-1).astype(np.uint8)
-            print("Prediction completed. Output shape:", pred_classes.shape)
+            #print("Prediction completed. Output shape:", pred_classes.shape)
+            print(np.unique(pred_classes))
 
             # Color map
             # color_map = {
