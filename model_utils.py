@@ -1,6 +1,6 @@
 import os
 import ee
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 from huggingface_hub import hf_hub_download
 from tensorflow.keras.utils import custom_object_scope
 import tensorflow as tf
@@ -56,9 +56,9 @@ def load_region_model(region_name):
     model_path = hf_hub_download(
         repo_id="Masolele/deforestwatch-models",  # Change if your username/repo differs
         filename=filename,
-        repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
+        #repo_type="dataset",  # ⚠️ Important! This tells HF it's a dataset, not a model
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
-    return load_model(model_path, compile=False)
-    #return load_model(model_path, compile=False, custom_objects={'PositionEmbedding': PositionEmbedding})
+    #return load_model(model_path, compile=False)
+    return load_model(model_path, compile=False, custom_objects={'PositionEmbedding': PositionEmbedding})
     
