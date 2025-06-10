@@ -145,7 +145,7 @@ def preprocess_planet(roi, start_date, end_date):
     })
 
     response = requests.get(url)
-    img = Image.open(BytesIO(response.content)).convert('RGB')
+    img = Image.open(BytesIO(response.content))#.convert('RGB')
     arr = np.array(img).astype(np.float32) / 255.0
     arr = np.repeat(arr[:, :, np.newaxis], 17, axis=2)  # TEMP: simulate 17-band shape
 
