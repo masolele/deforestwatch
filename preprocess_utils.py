@@ -142,7 +142,7 @@ def preprocess_planet(roi, start_date, end_date):
     geemap.ee_export_image(image,
                            filename= 'clipped.tif',
                            scale=10,
-                           region=feat.bounds()
+                           region=roi.bounds()
                           )
     arr = io.imread('clipped.tif') 
     
