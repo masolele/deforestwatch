@@ -45,5 +45,5 @@ def load_region_model(region_name):
         cache_dir="models"  # Store locally to avoid repeated downloads
     )
     #return load_model(model_path, compile=False)
-    return load_model(model_path, compile=False, custom_objects=custom_objects)
+    return load_model(model_path, compile=False)
     
