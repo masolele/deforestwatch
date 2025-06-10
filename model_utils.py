@@ -61,6 +61,6 @@ def load_region_model(region_name):
     )
     #return load_model(model_path, compile=False)
     return load_model(model_path, compile=False, custom_objects=custom_objects.update({
-    'RES_Attention_UNetFusion3I_Sentinel': RES_Attention_UNetFusion3I_Sentinel}))
+    'Attention_UNetFusion3I_Sentinel': Attention_UNetFusion3I_Sentinel}))
     #return load_model(model_path, compile=False, custom_objects={'PositionEmbedding': PositionEmbedding})
     
