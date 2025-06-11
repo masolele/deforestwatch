@@ -14,7 +14,7 @@ import tensorflow.keras.backend as K
 
 # Region-to-model file names
 region_models = {
-    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.keras', #'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.keras', #best_weights_VIT_FusionAFR2.keras
+    'Africa': 'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.hdf5', #'best_weights_att_unet_lagtime_5_Fused3_2023_totalLoss6V1_without_loss_sentAfrica6.keras', #best_weights_VIT_FusionAFR2.keras
     'Asia': 'best_weights_VIT_FusionSEA1.keras',
     'Latin America': 'best_weights_VIT_FusionSA7.keras'
 }
