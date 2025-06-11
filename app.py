@@ -103,6 +103,27 @@ tile = folium.TileLayer(
         overlay = True,
         control = True
        ).add_to(m)
+# Load Hansen Global Forest Loss dataset (2000-2023)
+hansen = ee.Image('UMD/hansen/global_forest_change_2023_v1_11')
+
+# Select the 'lossyear' band (forest loss year, 0-23 representing 2000-2023)
+forest_loss = hansen.select('lossyear')
+
+# Define visualization parameters (red color for loss)
+vis_params = {
+    'min': 1,
+    'max': 23,
+    'palette': ['FF0000'],  # Red color for loss
+    'opacity': 0.7
+}
+
+# Add the GEE layer to the Folium map
+geemap.add_ee_layer(
+    m,
+    forest_loss,
+    vis_params,
+    'Forest Loss (2000-2023)'
+)
 draw = folium.plugins.Draw(export=True)
 draw.add_to(m)
 
