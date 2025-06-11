@@ -118,12 +118,14 @@ vis_params = {
 }
 
 # Add the GEE layer to the Folium map
-geemap.add_ee_layer(
-    m,
-    forest_loss,
-    vis_params,
-    'Forest Loss (2000-2023)'
-)
+# Add the GEE layer to the map
+m.add_ee_layer(forest_loss, vis_params, "Forest Loss (2000-2023)")
+# geemap.add_ee_layer(
+#     m,
+#     forest_loss,
+#     vis_params,
+#     'Forest Loss (2000-2023)'
+# )
 draw = folium.plugins.Draw(export=True)
 draw.add_to(m)
 
