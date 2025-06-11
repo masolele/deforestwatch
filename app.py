@@ -15,6 +15,7 @@ import json
 from google.oauth2 import service_account
 from streamlit_folium import st_folium
 import folium
+from folium.plugins import Basemap
 from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
 from smooth_tiled_predictions import predict_img_with_smooth_windowing
 from production_ready_script import LargeImagePredictor
@@ -96,13 +97,14 @@ st.subheader("Or draw ROI on the map")
 
 # Create map centered on Africa
 m = folium.Map(location=[0, 20], zoom_start=3)
-tile = folium.TileLayer(
-        tiles = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        attr = 'Esri',
-        name = 'Esri Satellite',
-        overlay = True,
-        control = True
-       ).add_to(m)
+Basemap('SATELLITE').add_to(m)
+# tile = folium.TileLayer(
+#         tiles = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+#         attr = 'Esri',
+#         name = 'Esri Satellite',
+#         overlay = True,
+#         control = True
+#        ).add_to(m)
 draw = folium.plugins.Draw(export=True)
 draw.add_to(m)
 
