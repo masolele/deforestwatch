@@ -96,6 +96,7 @@ st.subheader("Or draw ROI on the map")
 
 # Create map centered on Africa
 m = folium.Map(location=[0, 20], zoom_start=3)
+m.add_basemap("SATELLITE")
 draw = folium.plugins.Draw(export=True)
 draw.add_to(m)
 
