@@ -95,8 +95,7 @@ if uploaded_file:
 st.subheader("Or draw ROI on the map")
 
 # Create map centered on Africa
-#m = folium.Map(location=[0, 20], zoom_start=3)
-m = geemap.Map(location=[0, 20], zoom_start=3)
+m = folium.Map(location=[0, 20], zoom_start=3)
 tile = folium.TileLayer(
         tiles = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         attr = 'Esri',
@@ -105,7 +104,6 @@ tile = folium.TileLayer(
         control = True
        ).add_to(m)
 # Load Hansen Global Forest Loss dataset (2000-2023)
-#m = geemap.Map(location=[0, 20], zoom_start=3)
 hansen = ee.Image('UMD/hansen/global_forest_change_2023_v1_11')
 
 # Select the 'lossyear' band (forest loss year, 0-23 representing 2000-2023)
@@ -118,10 +116,21 @@ vis_params = {
     'palette': ['FF0000'],  # Red color for loss
     'opacity': 0.7
 }
+# Get GEE tile URL
+map_id = forest_loss.getMapId(vis_params)
+tile_url = map_id['tile_fetcher'].url_format
 
+# Add to folium.Map
+folium.TileLayer(
+    tiles=tile_url,
+    attr='Google Earth Engine',
+    name='Forest Loss',
+    overlay=True,
+    control=True
+).add_to(m)
 # Add the GEE layer to the Folium map
 # Add the GEE layer to the map
-m.add_ee_layer(forest_loss, vis_params, "Forest Loss (2000-2023)")
+#m.add_ee_layer(forest_loss, vis_params, "Forest Loss (2000-2023)")
 # geemap.add_ee_layer(
 #     m,
 #     forest_loss,
