@@ -104,6 +104,7 @@ tile = folium.TileLayer(
         control = True
        ).add_to(m)
 # Load Hansen Global Forest Loss dataset (2000-2023)
+m = geemap.Map(location=[0, 20], zoom_start=3)
 hansen = ee.Image('UMD/hansen/global_forest_change_2023_v1_11')
 
 # Select the 'lossyear' band (forest loss year, 0-23 representing 2000-2023)
