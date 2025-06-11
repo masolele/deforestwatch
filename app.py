@@ -96,7 +96,13 @@ st.subheader("Or draw ROI on the map")
 
 # Create map centered on Africa
 m = folium.Map(location=[0, 20], zoom_start=3)
-m.add_basemap("SATELLITE")
+tile = folium.TileLayer(
+        tiles = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        attr = 'Esri',
+        name = 'Esri Satellite',
+        overlay = True,
+        control = True
+       ).add_to(m)
 draw = folium.plugins.Draw(export=True)
 draw.add_to(m)
 
