@@ -204,37 +204,42 @@ if roi:
             #    3: (31, 120, 180), 4: (176, 139, 109), 5: (227, 168, 87), 6: (204, 204, 204)
             #}
 
-            color_map = {0: (255, 255, 255),
-                         1: (201, 160, 220),    # Large-scale cropland
-                         2: (227, 168, 87),     # Pasture
-                         3: (255, 186, 186),       # Mining
-                         4: (178, 132, 190),    # Small-scale cropland
-                         5: (255, 123, 123),    # Roads
-                         6: (158, 189, 110),     # Other-land with tree cover
-                         7: (78, 124, 78),        # Plantation forest
-                         8: (165, 11, 94),     # Coffee
-                         9: (255, 82, 82),    # Built-up
-                         10: (31, 120, 180),     # Water
-                         11: (255, 0, 169),   # Oil palm
-                         12: (93, 156, 236),     # Rubber
-                         13: (0, 255, 255),      # Cacao
-                         14: (224, 243, 219),   # Avocado
-                         15: (255, 159, 28),    # Soy
-                         16: (254, 217, 118),   # Sugar
-                         17: (255, 255, 190),   # Maize
-                         18: (255, 255, 153),   # Banana
-                         19: (255, 218, 185),   # Pineapple
-                         20: (230, 230, 250),   # Rice
-                         21: (160, 82, 45),     # Logging
-                         22: (255, 204, 229),   # Cashew
-                         23: (186, 85, 211),    # Tea
-                         24: (102, 153, 153),   # Others
-                         #24: (192, 192, 192),   # Unknown / fallback
-                        }
+            # Hex color map
+            hex_color_map = {
+                0: "#FFFFFF",
+                1: "#C9A0DC",
+                2: "#E3A857",
+                3: "#FFBABA",
+                4: "#B284BE",
+                5: "#FF7B7B",
+                6: "#9EBD6E",
+                7: "#4E7C4E",
+                8: "#A50B5E",
+                9: "#FF5252",
+                10: "#1F78B4",
+                11: "#FF00A9",
+                12: "#5D9CEC",
+                13: "#00FFFF",
+                14: "#E0F3DB",
+                15: "#FF9F1C",
+                16: "#FED976",
+                17: "#FFFFBE",
+                18: "#FFFF99",
+                19: "#FFDAB9",
+                20: "#E6E6FA",
+                21: "#A0522D",
+                22: "#FFCCE5",
+                23: "#BA55D3",
+                24: "#669999"
+            }
 
-            rgb_image = np.zeros((*pred_classes.shape, 3), dtype=np.uint8)
-            for cls, rgb in color_map.items():
-                rgb_image[pred_classes == cls] = rgb
+
+            # rgb_image = np.zeros((*pred_classes.shape, 3), dtype=np.uint8)
+            # for cls, rgb in color_map.items():
+            #     rgb_image[pred_classes == cls] = rgb
+
+            # Convert hex to RGB (matplotlib supports hex input via pcolormesh, but imshow expects RGB)
+            rgb_image = np.array([[plt.colors.to_rgb(c) for c in row] for row in hex_image])
             
             # Plot using matplotlib
             fig, ax = plt.subplots(figsize=(10, 10))
@@ -270,9 +275,11 @@ if roi:
                 24: "Others"
             }
             
-            patches = [mpatches.Patch(color=np.array(color_map[c])/255.0, label=class_labels[c]) for c in sorted(color_map)]
-            ax.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
-            
+            # patches = [mpatches.Patch(color=np.array(color_map[c])/255.0, label=class_labels[c]) for c in sorted(color_map)]
+            # ax.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+
+            patches = [mpatches.Patch(color=hex_color_map[c], label=class_labels[c]) for c in sorted(hex_color_map)]
+            ax.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)           
             st.pyplot(fig)
 
 
