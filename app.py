@@ -238,6 +238,13 @@ if roi:
             # for cls, rgb in color_map.items():
             #     rgb_image[pred_classes == cls] = rgb
 
+
+            # Convert prediction to hex image
+            hex_image = np.full(pred_classes.shape, "#000000", dtype=object)  # default to black
+            
+            for cls, hex_color in hex_color_map.items():
+                hex_image[pred_classes == cls] = hex_color
+
             # Convert hex to RGB (matplotlib supports hex input via pcolormesh, but imshow expects RGB)
             rgb_image = np.array([[plt.colors.to_rgb(c) for c in row] for row in hex_image])
             
