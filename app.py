@@ -108,6 +108,7 @@ hansen = ee.Image('UMD/hansen/global_forest_change_2023_v1_11')
 
 # Select the 'lossyear' band (forest loss year, 0-23 representing 2000-2023)
 forest_loss = hansen.select('lossyear')
+loss = forest_loss.max()
 
 # Define visualization parameters (red color for loss)
 vis_params = {
@@ -188,6 +189,8 @@ if roi:
             )
             #pred = predictor.predict_large_image(x_img)
             pred_classes = np.argmax(pred, axis=-1).astype(np.uint8)
+            pred_classes = np.where(loss==0, 0, pred_classes)
+            pred_classes = np.where(pred_classes == 0, np.nan, pred_classes)
             #print("Prediction completed. Output shape:", pred_classes.shape)
             print(np.unique(pred_classes))
 
