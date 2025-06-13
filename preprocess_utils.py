@@ -234,7 +234,6 @@ def preprocess_planet(roi, start_date, end_date):
 
     # Stack all 17 bands
     image = s2 \
-        .addBands(ndvi) \
         .addBands(vv) \
         .addBands(vh) \
         .addBands(elevation.rename('elevation')) \
