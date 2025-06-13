@@ -238,10 +238,25 @@ def preprocess_planet(roi, start_date, end_date):
     from io import BytesIO
 
     # Sentinel-2 Bands
+    csPlus = ee.ImageCollection('GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED');
+    #QA_BAND = 'cs';
+    QA_BAND = 'cs_cdf';
+    CLEAR_THRESHOLD = 0.40;
+      
+    #BANDS = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B11','B12']
+    
+    def clearMask(img):
+        
+        img = img.toFloat().resample('bilinear').reproject(img.select('B2').projection())
+        return img.updateMask(img.select(QA_BAND).gte(CLEAR_THRESHOLD))
+
+    
     s2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
         .filterBounds(roi) \
         .filterDate(start_date, end_date) \
-        .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20)) \
+        .linkCollection(csPlus, [QA_BAND])\
+        .map(clearMask)\
+        #.filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20)) \
         .median() \
         .clip(roi)
 
@@ -274,11 +289,10 @@ def preprocess_planet(roi, start_date, end_date):
 
     # Stack all 17 bands
     image = s2 \
-        .addBands(vv) \
-        .addBands(vh) \
+        .addBands(s1) \
         .addBands(elevation.rename('elevation')) \
         .addBands(lon) \
-        .addBands(lat)
+        .addBands(lat).int16()
 
     # Export to thumbnail (low-res for demo/testing)
     current_working_directory = os.getcwd()
