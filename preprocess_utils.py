@@ -148,21 +148,61 @@ def norm(image):
     
     return image
 
-def preprocess_images(x_img):
+def extract_lat_lon(image_path):
+    """
+    Extract latitude and longitude values for each pixel in a georeferenced image.
+    
+    Args:
+        image_path (str): Path to the Sentinel image file.
+        
+    Returns:
+        latitudes (numpy array): Array of latitude values for each pixel.
+        longitudes (numpy array): Array of longitude values for each pixel.
+    """
+    # Open the Sentinel image using rasterio
+    with rasterio.open(image_path) as src:
+        # Get the affine transform and CRS information
+        transform = src.transform
+        crs = src.crs
+        
+        # Get the dimensions of the image
+        height, width = src.shape
+        
+        # Create arrays for row and column indices
+        rows, cols = np.meshgrid(np.arange(height), np.arange(width), indexing='ij')
+        
+        # Compute the geographic coordinates
+        xs, ys = rasterio.transform.xy(transform, rows, cols)
+        xs = np.array(xs)
+        ys = np.array(ys)
+        
+        # Transform to latitude and longitude if needed
+        if crs.to_string() != "EPSG:4326":  # EPSG:4326 is WGS84 (lat/lon)
+            from pyproj import Transformer
+            transformer = Transformer.from_crs(crs, "EPSG:4326", always_xy=True)
+            longitudes, latitudes = transformer.transform(xs, ys)
+        else:
+            longitudes, latitudes = xs, ys
+
+    return latitudes, longitudes
+
+def preprocess_images(x_img,data):
   # compile
     #loss = x_img[:,:,14]
     #loss = np.where(loss==0, 1, loss)
     #kernel = np.ones((40, 40))
     #loss = np.int64(convolve2d(loss, kernel, mode='same') > 0)
-
+    latitudes, longitudes = extract_lat_lon(data)
     x_img1 = x_img[:,:,[0,1,2,3,4,5,6,7,8]] 
 
     x_img2 = norm(x_img1)
     vv = normalise_vv(x_img[:,:,9])
     vh = normalise_vh(x_img[:,:,10])
     alt = normalise_altitude(x_img[:,:,11])
-    lon = normalise_longitude(x_img[:,:,12])
-    lat = normalise_latitude(x_img[:,:,13])
+    #lon = normalise_longitude(x_img[:,:,12])
+    #lat = normalise_latitude(x_img[:,:,13])
+    lon = normalise_longitude(longitudes)[:,:,np.newaxis]
+    lat = normalise_latitude(latitudes)[:,:,np.newaxis]
 
     SIZE_X = (x_img.shape[0])
     SIZE_Y = (x_img.shape[1])
@@ -236,9 +276,9 @@ def preprocess_planet(roi, start_date, end_date):
     image = s2 \
         .addBands(vv) \
         .addBands(vh) \
-        .addBands(elevation.rename('elevation')) \
-        .addBands(lon) \
-        .addBands(lat)
+        .addBands(elevation.rename('elevation')) #\
+        #.addBands(lon) \
+        #.addBands(lat)
 
     # Export to thumbnail (low-res for demo/testing)
     current_working_directory = os.getcwd()
@@ -258,7 +298,8 @@ def preprocess_planet(roi, start_date, end_date):
 
     
     arr = io.imread('clipped.tif') 
-    arr2 = preprocess_images(arr)
+    data = "clipped.tif"
+    arr2 = preprocess_images(arr, data)
     return arr2 #np.nan_to_num(arr)
     
     # url = image.getThumbURL({
