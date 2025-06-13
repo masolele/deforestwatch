@@ -255,8 +255,6 @@ def preprocess_planet(roi, start_date, end_date):
         .filterBounds(roi) \
         .filterDate(start_date, end_date) \
         .linkCollection(csPlus, [QA_BAND])\
-        .map(clearMask)\
-        #.filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20)) \
         .median() \
         .clip(roi)
 
