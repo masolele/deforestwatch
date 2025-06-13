@@ -230,8 +230,8 @@ if roi:
                         }
 
             rgb_image = np.zeros((*pred_classes.shape, 3), dtype=np.uint8)
-            # for cls, rgb in color_map.items():
-            #     rgb_image[pred_classes == cls] = rgb
+            for cls, rgb in color_map.items():
+                rgb_image[pred_classes == cls] = rgb
             
             # Plot using matplotlib
             fig, ax = plt.subplots(figsize=(10, 10))
@@ -273,7 +273,7 @@ if roi:
             st.pyplot(fig)
 
 
-            st.image(rgb_image, caption="Predicted Land Use (Masked)", use_container_width=True)
+            #st.image(rgb_image, caption="Predicted Land Use (Masked)", use_container_width=True)
 
             if st.button("Export GeoTIFF"):
                 transform = from_origin(-180, 90, 0.01, 0.01)  # You can adjust this
