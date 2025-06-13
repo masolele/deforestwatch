@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 
+
 # Authenticate Earth Engine (Streamlit Cloud will use secrets.toml)
 # service_account = st.secrets["earthengine"]["EE_SERVICE_ACCOUNT"]
 # private_key = st.secrets["earthengine"]["EE_PRIVATE_KEY"]
@@ -274,6 +275,68 @@ if roi:
 
 
             #st.image(rgb_image, caption="Predicted Land Use (Masked)", use_container_width=True)
+
+            # Assuming `rgb_image` is the prediction RGB image (H, W, 3)
+            # and `lat`, `lon` are the center coordinates of your prediction
+            height, width, _ = rgb_image.shape
+            
+            # Define spatial extent — adjust based on your tile extent
+            # Let's say each tile is 6000 x 6000 pixels at 10m resolution
+            pixel_size = 10  # meters
+            extent = [
+                lat - (height * pixel_size) / 2 / 111320,  # min lat
+                lat + (height * pixel_size) / 2 / 111320,  # max lat
+                lon - (width * pixel_size) / 2 / (111320 * np.cos(np.deg2rad(lat))),  # min lon
+                lon + (width * pixel_size) / 2 / (111320 * np.cos(np.deg2rad(lat))),  # max lon
+            ]
+            
+            # Create a temporary GeoTIFF from the RGB image
+            with tempfile.NamedTemporaryFile(suffix=".tif", delete=False) as tmpfile:
+                temp_tif = tmpfile.name
+                transform = from_origin(extent[2], extent[1], pixel_size, pixel_size)
+                with rasterio.open(
+                    temp_tif,
+                    "w",
+                    driver="GTiff",
+                    height=height,
+                    width=width,
+                    count=3,
+                    dtype=rgb_image.dtype,
+                    crs="EPSG:4326",
+                    transform=transform,
+                ) as dst:
+                    for i in range(3):
+                        dst.write(rgb_image[:, :, i], i + 1)
+            
+            # Convert GeoTIFF to PNG for Leaflet overlay
+            img = Image.fromarray(rgb_image)
+            png_path = temp_tif.replace(".tif", ".png")
+            img.save(png_path)
+            
+            # Define image bounds for Leaflet overlay
+            bounds = [[extent[0], extent[2]], [extent[1], extent[3]]]
+            
+            # Create folium map
+            m = folium.Map(location=[lat, lon], zoom_start=12)
+            
+            # Add prediction as ImageOverlay
+            folium.raster_layers.ImageOverlay(
+                name="Predicted Land Use",
+                image=png_path,
+                bounds=bounds,
+                opacity=0.7,
+                interactive=True,
+                cross_origin=False,
+            ).add_to(m)
+            
+            folium.LayerControl().add_to(m)
+            
+            # Show in Streamlit
+            st_folium(m, width=700, height=500)
+            
+            # Clean up temp files
+            os.remove(temp_tif)
+            os.remove(png_path)
 
             if st.button("Export GeoTIFF"):
                 transform = from_origin(-180, 90, 0.01, 0.01)  # You can adjust this
