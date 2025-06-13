@@ -243,7 +243,7 @@ if roi:
             ax.axis('off')
             
             # Create legend
-            class_labels = {
+            class_labels = {0: "Background",
                 1: "Large-scale cropland",
                 2: "Pasture",
                 3: "Mining",
