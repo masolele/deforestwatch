@@ -18,6 +18,8 @@ import folium
 from Unet_RES_Att_models_IV import Attention_UNetFusion3I, Attention_UNetFusion3I_Sentinel
 from smooth_tiled_predictions import predict_img_with_smooth_windowing
 from production_ready_script import LargeImagePredictor
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 
 # Authenticate Earth Engine (Streamlit Cloud will use secrets.toml)
@@ -228,8 +230,48 @@ if roi:
                         }
 
             rgb_image = np.zeros((*pred_classes.shape, 3), dtype=np.uint8)
-            for cls, rgb in color_map.items():
-                rgb_image[pred_classes == cls] = rgb
+            # for cls, rgb in color_map.items():
+            #     rgb_image[pred_classes == cls] = rgb
+            
+            # Plot using matplotlib
+            fig, ax = plt.subplots(figsize=(10, 10))
+            ax.imshow(rgb_image)
+            ax.set_title("Predicted Land Use Map")
+            ax.axis('off')
+            
+            # Create legend
+            class_labels = {
+                1: "Large-scale cropland",
+                2: "Pasture",
+                3: "Mining",
+                4: "Small-scale cropland",
+                5: "Roads",
+                6: "Other-land with tree cover",
+                7: "Plantation forest",
+                8: "Coffee",
+                9: "Built-up",
+                10: "Water",
+                11: "Oil palm",
+                12: "Rubber",
+                13: "Cacao",
+                14: "Avocado",
+                15: "Soy",
+                16: "Sugar",
+                17: "Maize",
+                18: "Banana",
+                19: "Pineapple",
+                20: "Rice",
+                21: "Logging",
+                22: "Cashew",
+                23: "Tea",
+                24: "Others"
+            }
+            
+            patches = [mpatches.Patch(color=np.array(color_map[c])/255.0, label=class_labels[c]) for c in sorted(color_map)]
+            ax.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+            
+            st.pyplot(fig)
+
 
             st.image(rgb_image, caption="Predicted Land Use (Masked)", use_container_width=True)
 
