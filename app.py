@@ -204,19 +204,19 @@ if roi:
             #    3: (31, 120, 180), 4: (176, 139, 109), 5: (227, 168, 87), 6: (204, 204, 204)
             #}
 
-            color_map = {1: '#C9A0DC',    # Large-scale cropland
-                         2: '#E3A857',     # Pasture
-                         3: '#ffbaba',       # Mining
-                         4: (255, 204, 153),    # Small-scale cropland
-                         5: (128, 128, 128),    # Roads
-                         6: (140, 198, 63),     # Other-land with tree cover
-                         7: (0, 100, 0),        # Plantation forest
-                         8: (111, 64, 152),     # Coffee
-                         9: (153, 153, 153),    # Built-up
+            color_map = {1: (201, 160, 220),    # Large-scale cropland
+                         2: (227, 168, 87),     # Pasture
+                         3: (255, 186, 186),       # Mining
+                         4: (178, 132, 190),    # Small-scale cropland
+                         5: (255, 123, 123),    # Roads
+                         6: (158, 189, 110),     # Other-land with tree cover
+                         7: (78, 124, 78),        # Plantation forest
+                         8: (165, 11, 94),     # Coffee
+                         9: (255, 82, 82),    # Built-up
                          10: (31, 120, 180),     # Water
-                         11: (255, 102, 102),   # Oil palm
-                         12: (5, 136, 179),     # Rubber
-                         13: (128, 64, 0),      # Cacao
+                         11: (255, 0, 169),   # Oil palm
+                         12: (93, 156, 236),     # Rubber
+                         13: (0, 255, 255),      # Cacao
                          14: (204, 255, 204),   # Avocado
                          15: (255, 153, 51),    # Soy
                          16: (255, 255, 102),   # Sugar
