@@ -246,7 +246,8 @@ if roi:
                 hex_image[pred_classes == cls] = hex_color
 
             # Convert hex to RGB (matplotlib supports hex input via pcolormesh, but imshow expects RGB)
-            rgb_image = np.array([[plt.colors.to_rgb(c) for c in row] for row in hex_image])
+            #rgb_image = np.array([[plt.colors.to_rgb(c) for c in row] for row in hex_image])
+            rgb_image = np.array([[mcolors.to_rgb(c) for c in row] for row in hex_image])
             
             # Plot using matplotlib
             fig, ax = plt.subplots(figsize=(10, 10))
