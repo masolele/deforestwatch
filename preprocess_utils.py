@@ -228,7 +228,7 @@ def preprocess_images(x_img,data):
     lon = np.reshape(lon, (SIZE_X,SIZE_Y,1))
     lat = np.reshape(lat, (SIZE_X,SIZE_Y,1))
     image = np.concatenate((x_img2, ndvi,ndre,evi,vv, vh, alt, lon,lat), axis=2)
-    #image = np.nan_to_num(image) 
+    image = np.nan_to_num(image) 
     return image
 
 # Main preprocessing function: returns 17-band NumPy array
