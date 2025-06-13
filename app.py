@@ -20,6 +20,8 @@ from smooth_tiled_predictions import predict_img_with_smooth_windowing
 from production_ready_script import LargeImagePredictor
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import matplotlib.colors as mcolors
+from matplotlib.colors import to_rgb
 
 
 
