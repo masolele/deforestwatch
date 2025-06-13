@@ -54,8 +54,8 @@ st.title("🌍 Deforestation Land Use Prediction App")
 
 # Add date selectors to sidebar
 st.sidebar.markdown("### 🗓️ Select Image Date Range")
-start_date = st.sidebar.date_input("Start date", value=date(2024, 1, 1))
-end_date = st.sidebar.date_input("End date", value=date(2024, 12, 30))
+start_date = st.sidebar.date_input("Start date", value=date(2021, 1, 1))
+end_date = st.sidebar.date_input("End date", value=date(2021, 12, 31))
 
 if start_date >= end_date:
     st.sidebar.error("Start date must be before end date.")
