@@ -204,7 +204,8 @@ if roi:
             #    3: (31, 120, 180), 4: (176, 139, 109), 5: (227, 168, 87), 6: (204, 204, 204)
             #}
 
-            color_map = {1: (201, 160, 220),    # Large-scale cropland
+            color_map = {0: (255, 255, 255),
+                         1: (201, 160, 220),    # Large-scale cropland
                          2: (227, 168, 87),     # Pasture
                          3: (255, 186, 186),       # Mining
                          4: (178, 132, 190),    # Small-scale cropland
