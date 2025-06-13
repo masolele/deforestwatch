@@ -198,9 +198,9 @@ if roi:
             )
             #pred = predictor.predict_large_image(x_img)
             pred_classes = np.argmax(pred, axis=-1).astype(np.uint8)
-            if loss:
-                mask = loss > 0
-                pred_classes = np.where(mask, pred_classes, np.nan)
+            #if loss:
+                #mask = loss > 0
+                #pred_classes = np.where(mask, pred_classes, np.nan)
             #print("Prediction completed. Output shape:", pred_classes.shape)
             print(np.unique(pred_classes))
 
