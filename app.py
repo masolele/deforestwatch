@@ -108,7 +108,7 @@ hansen = ee.Image('UMD/hansen/global_forest_change_2023_v1_11')
 
 # Select the 'lossyear' band (forest loss year, 0-23 representing 2000-2023)
 forest_loss = hansen.select('lossyear')
-loss = forest_loss.max()
+loss = forest_loss#.max()
 
 # Define visualization parameters (red color for loss)
 vis_params = {
