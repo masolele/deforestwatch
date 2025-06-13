@@ -149,7 +149,7 @@ draw.add_to(m)
 output = st_folium(m, height=500, width=700)
 
 forest_loss = forest_loss.resample('bilinear').reproject(crs='EPSG:4326', scale=10)
-loss_dict = forest_loss.clip(roi)
+loss_dict = forest_loss.clip(roi.bounds())
 loss = np.array(loss_dict.get('lossyear').getInfo())
 
 patch_size = 64
