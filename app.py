@@ -148,10 +148,6 @@ draw.add_to(m)
 
 output = st_folium(m, height=500, width=700)
 
-forest_loss = forest_loss.resample('bilinear').reproject(crs='EPSG:4326', scale=10)
-loss_dict = forest_loss.clip(roi.bounds())
-loss = np.array(loss_dict.get('lossyear').getInfo())
-
 patch_size = 64
 n_classes = 25
 roi = None
@@ -166,6 +162,10 @@ if output and "all_drawings" in output and output["all_drawings"]:
     import geemap
     roi_fc = geemap.geopandas_to_ee(gdf)
     roi = roi_fc.geometry()
+    
+    forest_loss = forest_loss.resample('bilinear').reproject(crs='EPSG:4326', scale=10)
+    loss_dict = forest_loss.clip(roi.bounds())
+    loss = np.array(loss_dict.get('lossyear').getInfo())
 
 if roi:
     region = get_region_from_roi(roi)
