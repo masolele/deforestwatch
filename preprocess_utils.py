@@ -312,7 +312,7 @@ def preprocess_planet(roi, start_date, end_date):
     arr = io.imread('clipped.tif') 
     data = "clipped.tif"
     arr2 = preprocess_images(arr, data)
-    return arr2.astype(np.int32) #np.nan_to_num(arr)
+    return arr2.astype(np.float32) #np.nan_to_num(arr)
     
     # url = image.getThumbURL({
     #     'region': roi.bounds().getInfo()['coordinates'],
