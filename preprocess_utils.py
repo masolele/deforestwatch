@@ -278,7 +278,7 @@ def preprocess_planet(roi, start_date, end_date):
     vh = s1.select('VH')#.clamp(-30, -5).add(30).divide(25).rename('VH_norm')
 
     # Elevation
-    elevation = ee.ImageCollection('COPERNICUS/DEM/GLO30').select('DEM').mosaic()#.clamp(-400, 8000).add(400).divide(8400).clip(roi)
+    elevation = ee.ImageCollection('COPERNICUS/DEM/GLO30').select('DEM').mosaic().clip(roi)#.clamp(-400, 8000).add(400).divide(8400)
 
     # Latitude / Longitude (normalized)
     lonlat = ee.Image.pixelLonLat().clip(roi)
@@ -312,7 +312,7 @@ def preprocess_planet(roi, start_date, end_date):
     arr = io.imread('clipped.tif') 
     data = "clipped.tif"
     arr2 = preprocess_images(arr, data)
-    return arr2.astype(np.int16) #np.nan_to_num(arr)
+    return arr2.astype(np.int32) #np.nan_to_num(arr)
     
     # url = image.getThumbURL({
     #     'region': roi.bounds().getInfo()['coordinates'],
