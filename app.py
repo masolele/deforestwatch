@@ -240,65 +240,34 @@ if roi:
             }
 
 
-            # rgb_image = np.zeros((*pred_classes.shape, 3), dtype=np.uint8)
-            # for cls, rgb in color_map.items():
-            #     rgb_image[pred_classes == cls] = rgb
-
-
-            # Convert prediction to hex image
-            hex_image = np.full(pred_classes.shape, "#000000", dtype=object)  # default to black
-            
+            # Map predicted classes to hex color codes
+            hex_image = np.full(pred_classes.shape, "#000000", dtype=object)  # Default to black
             for cls, hex_color in hex_color_map.items():
                 hex_image[pred_classes == cls] = hex_color
-
-            # Convert hex to RGB (matplotlib supports hex input via pcolormesh, but imshow expects RGB)
-            #rgb_image = np.array([[plt.colors.to_rgb(c) for c in row] for row in hex_image])
-            rgb_image = np.array([[mcolors.to_rgb(c) for c in row] for row in hex_image])
-            print(np.unique(rgb_image[~np.isnan(rgb_image)], return_counts=True))
             
-            # Plot using matplotlib
+            # Convert hex to RGB for imshow (needed since imshow requires RGB values)
+            rgb_image = np.array([[mcolors.to_rgb(c) for c in row] for row in hex_image])
+            
+            # Plot with matplotlib
             fig, ax = plt.subplots(figsize=(10, 10))
             ax.imshow(rgb_image)
             ax.set_title("Predicted Land Use Map")
             ax.axis('off')
             
-            # Create legend
-            class_labels = {0: "Background",
-                1: "Large-scale cropland",
-                2: "Pasture",
-                3: "Mining",
-                4: "Small-scale cropland",
-                5: "Roads",
-                6: "Other-land with tree cover",
-                7: "Plantation forest",
-                8: "Coffee",
-                9: "Built-up",
-                10: "Water",
-                11: "Oil palm",
-                12: "Rubber",
-                13: "Cacao",
-                14: "Avocado",
-                15: "Soy",
-                16: "Sugar",
-                17: "Maize",
-                18: "Banana",
-                19: "Pineapple",
-                20: "Rice",
-                21: "Logging",
-                22: "Cashew",
-                23: "Tea",
-                24: "Others"
+            # Define class labels
+            class_labels = {
+                0: "Background", 1: "Large-scale cropland", 2: "Pasture", 3: "Mining", 4: "Small-scale cropland",
+                5: "Roads", 6: "Other-land with tree cover", 7: "Plantation forest", 8: "Coffee", 9: "Built-up",
+                10: "Water", 11: "Oil palm", 12: "Rubber", 13: "Cacao", 14: "Avocado", 15: "Soy", 16: "Sugar",
+                17: "Maize", 18: "Banana", 19: "Pineapple", 20: "Rice", 21: "Logging", 22: "Cashew", 23: "Tea", 24: "Others"
             }
             
-            # patches = [mpatches.Patch(color=np.array(color_map[c])/255.0, label=class_labels[c]) for c in sorted(color_map)]
-            # ax.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
-
+            # Create legend from hex colors
             patches = [mpatches.Patch(color=hex_color_map[c], label=class_labels[c]) for c in sorted(hex_color_map)]
-            ax.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)           
+            ax.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+            
+            # Display in Streamlit
             st.pyplot(fig)
-
-
-            #st.image(rgb_image, caption="Predicted Land Use (Masked)", use_container_width=True)
 
 
             if st.button("Export GeoTIFF"):
