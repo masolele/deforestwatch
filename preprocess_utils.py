@@ -199,10 +199,10 @@ def preprocess_images(x_img,data):
     vv = normalise_vv(x_img[:,:,9])
     vh = normalise_vh(x_img[:,:,10])
     alt = normalise_altitude(x_img[:,:,11])
-    lon = normalise_longitude(x_img[:,:,12])
-    lat = normalise_latitude(x_img[:,:,13])
-    #lon = normalise_longitude(longitudes)#[:,:,np.newaxis]
-    #lat = normalise_latitude(latitudes)#[:,:,np.newaxis]
+    # lon = normalise_longitude(x_img[:,:,12])
+    # lat = normalise_latitude(x_img[:,:,13])
+    lon = normalise_longitude(longitudes)#[:,:,np.newaxis]
+    lat = normalise_latitude(latitudes)#[:,:,np.newaxis]
 
     SIZE_X = (x_img.shape[0])
     SIZE_Y = (x_img.shape[1])
