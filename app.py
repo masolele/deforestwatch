@@ -202,7 +202,7 @@ if roi:
                 #mask = loss > 0
                 #pred_classes = np.where(mask, pred_classes, np.nan)
             #print("Prediction completed. Output shape:", pred_classes.shape)
-            print(np.unique(pred_classes), return_counts=True)
+            print(np.unique(pred_classes[~np.isnan(pred_classes)], return_counts=True))
 
             # Color map
             # color_map = {
@@ -254,7 +254,7 @@ if roi:
             # Convert hex to RGB (matplotlib supports hex input via pcolormesh, but imshow expects RGB)
             #rgb_image = np.array([[plt.colors.to_rgb(c) for c in row] for row in hex_image])
             rgb_image = np.array([[mcolors.to_rgb(c) for c in row] for row in hex_image])
-            print(np.unique(rgb_image), return_counts=True)
+            print(np.unique(rgb_image[~np.isnan(rgb_image)], return_counts=True))
             
             # Plot using matplotlib
             fig, ax = plt.subplots(figsize=(10, 10))
