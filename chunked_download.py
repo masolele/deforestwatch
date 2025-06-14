@@ -29,7 +29,8 @@ def chunked_export(image, roi, output_path, scale=10, max_size_mb=50):
     height = max_y - min_y
     
     # Estimate pixel count that would stay under size limit
-    pixel_size_bytes = 4  # Assuming 32-bit floats
+    pixel_size_bytes = 2  # Assuming 16-bit integers (int16)
+    #pixel_size_bytes = 4  # Assuming 32-bit floats
     max_pixels = (max_size_mb * 1024 * 1024) / (pixel_size_bytes * image.bandNames().size().getInfo())
     area_per_chunk = max_pixels * (scale ** 2)
     
