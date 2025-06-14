@@ -271,10 +271,6 @@ if roi:
             st.pyplot(fig)
             # Define georeference and ROI
 
-            transform = from_origin(-180, 90, 0.01, 0.01)  # adjust resolution and origin as needed
-            #roi_bounds = (-60, -10, -58, -8)  # xmin, ymin, xmax, ymax
-            geometry = [mapping(box(*roi))]
-
 
             # Write full prediction to in-memory GeoTIFF
             with rasterio.io.MemoryFile() as memfile:
@@ -290,23 +286,23 @@ if roi:
                     dataset.write(pred_classes, 1)
             
                     # Clip to ROI
-                    clipped_image, clipped_transform = mask(dataset, geometry, crop=True)
+                    #clipped_image, clipped_transform = mask(dataset, geometry, crop=True)
             
                 # Write clipped image to another memory file
-                with rasterio.io.MemoryFile() as clipped_memfile:
-                    with clipped_memfile.open(
-                        driver="GTiff",
-                        height=clipped_image.shape[1],
-                        width=clipped_image.shape[2],
-                        count=1,
-                        dtype='uint8',
-                        crs="EPSG:4326",
-                        transform=clipped_transform
-                    ) as dst:
-                        dst.write(clipped_image)
+                # with rasterio.io.MemoryFile() as clipped_memfile:
+                #     with clipped_memfile.open(
+                #         driver="GTiff",
+                #         height=clipped_image.shape[1],
+                #         width=clipped_image.shape[2],
+                #         count=1,
+                #         dtype='uint8',
+                #         crs="EPSG:4326",
+                #         transform=clipped_transform
+                #     ) as dst:
+                #         dst.write(clipped_image)
             
                     # Now read bytes from the clipped_memfile
-                    clipped_bytes = clipped_memfile.read()
+                    clipped_bytes = memfile.read()
             
             # Streamlit download button — sends GeoTIFF bytes
             st.download_button(
