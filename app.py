@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.colors as mcolors
 from matplotlib.colors import to_rgb
+from shapely.geometry import box, mapping
 
 
 
@@ -268,33 +269,54 @@ if roi:
             
             # Display in Streamlit
             st.pyplot(fig)
+            # Define georeference and ROI
+
+            transform = from_origin(-180, 90, 0.01, 0.01)  # adjust resolution and origin as needed
+            #roi_bounds = (-60, -10, -58, -8)  # xmin, ymin, xmax, ymax
+            geometry = [mapping(box(*roi))]
 
 
-            if st.button("Export GeoTIFF"):
-                transform = from_origin(-180, 90, 0.01, 0.01)  # Adjust as needed
-                memfile = io.BytesIO()
+            # Write full prediction to in-memory GeoTIFF
+            with rasterio.io.MemoryFile() as memfile:
+                with memfile.open(
+                    driver="GTiff",
+                    height=pred_classes.shape[0],
+                    width=pred_classes.shape[1],
+                    count=1,
+                    dtype='uint8',
+                    crs="EPSG:4326",
+                    transform=transform
+                ) as dataset:
+                    dataset.write(pred_classes, 1)
             
-                # Write GeoTIFF to memory
-                with rasterio.io.MemoryFile() as memfile:
-                    with memfile.open(
+                    # Clip to ROI
+                    clipped_image, clipped_transform = mask(dataset, geometry, crop=True)
+            
+                # Write clipped image to another memory file
+                with rasterio.io.MemoryFile() as clipped_memfile:
+                    with clipped_memfile.open(
                         driver="GTiff",
-                        height=pred_classes.shape[0],
-                        width=pred_classes.shape[1],
+                        height=clipped_image.shape[1],
+                        width=clipped_image.shape[2],
                         count=1,
-                        dtype=rasterio.uint8,
-                        crs="EPSG:4326",  # more standard than +proj=latlong
-                        transform=transform
-                    ) as dataset:
-                        dataset.write(pred_classes.astype(rasterio.uint8), 1)
+                        dtype='uint8',
+                        crs="EPSG:4326",
+                        transform=clipped_transform
+                    ) as dst:
+                        dst.write(clipped_image)
             
-                    # Move to beginning of file and prepare for download
-                    memfile.seek(0)
-                    st.download_button(
-                        label="Download GeoTIFF",
-                        data=memfile.read(),
-                        file_name="prediction.tif",
-                        mime="image/tiff"
-                    )
+                    # Now read bytes from the clipped_memfile
+                    clipped_bytes = clipped_memfile.read()
+            
+            # Streamlit download button — sends GeoTIFF bytes
+            st.download_button(
+                label="Download Clipped GeoTIFF",
+                data=clipped_bytes,
+                file_name="clipped_prediction.tif",
+                mime="image/tiff"
+            )
+            
+
 
 
             # if st.button("Export GeoTIFF"):
