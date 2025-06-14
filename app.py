@@ -269,64 +269,20 @@ if roi:
             
             # Display in Streamlit
             st.pyplot(fig)
-            # Define georeference and ROI
 
 
-            # Write full prediction to in-memory GeoTIFF
-            with rasterio.io.MemoryFile() as memfile:
-                with memfile.open(
+            if st.button("Export GeoTIFF"):
+                transform = from_origin(-180, 90, 0.01, 0.01)  # You can adjust this
+                with rasterio.open(
+                    "prediction.tif", "w",
                     driver="GTiff",
                     height=pred_classes.shape[0],
                     width=pred_classes.shape[1],
                     count=1,
-                    dtype='uint8',
-                    crs="EPSG:4326",
+                    dtype=rasterio.uint8,
+                    crs="+proj=latlong",
                     transform=transform
-                ) as dataset:
-                    dataset.write(pred_classes, 1)
-            
-                    # Clip to ROI
-                    #clipped_image, clipped_transform = mask(dataset, geometry, crop=True)
-            
-                # Write clipped image to another memory file
-                # with rasterio.io.MemoryFile() as clipped_memfile:
-                #     with clipped_memfile.open(
-                #         driver="GTiff",
-                #         height=clipped_image.shape[1],
-                #         width=clipped_image.shape[2],
-                #         count=1,
-                #         dtype='uint8',
-                #         crs="EPSG:4326",
-                #         transform=clipped_transform
-                #     ) as dst:
-                #         dst.write(clipped_image)
-            
-                    # Now read bytes from the clipped_memfile
-                    clipped_bytes = memfile.read()
-            
-            # Streamlit download button — sends GeoTIFF bytes
-            st.download_button(
-                label="Download Clipped GeoTIFF",
-                data=clipped_bytes,
-                file_name="clipped_prediction.tif",
-                mime="image/tiff"
-            )
-            
-
-
-
-            # if st.button("Export GeoTIFF"):
-            #     transform = from_origin(-180, 90, 0.01, 0.01)  # You can adjust this
-            #     with rasterio.open(
-            #         "prediction.tif", "w",
-            #         driver="GTiff",
-            #         height=pred_classes.shape[0],
-            #         width=pred_classes.shape[1],
-            #         count=1,
-            #         dtype=rasterio.uint8,
-            #         crs="+proj=latlong",
-            #         transform=transform
-            #     ) as dst:
-            #         dst.write(pred_classes, 1)
-            #     with open("prediction.tif", "rb") as f:
-            #         st.download_button("Download GeoTIFF", f, "prediction.tif", "image/tiff")
+                ) as dst:
+                    dst.write(pred_classes, 1)
+                with open("prediction.tif", "rb") as f:
+                    st.download_button("Download GeoTIFF", f, "prediction.tif", "image/tiff")
