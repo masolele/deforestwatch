@@ -271,30 +271,30 @@ if roi:
 
 
             if st.button("Export GeoTIFF"):
-            transform = from_origin(-180, 90, 0.01, 0.01)  # Adjust as needed
-            memfile = io.BytesIO()
-        
-            # Write GeoTIFF to memory
-            with rasterio.io.MemoryFile() as memfile:
-                with memfile.open(
-                    driver="GTiff",
-                    height=pred_classes.shape[0],
-                    width=pred_classes.shape[1],
-                    count=1,
-                    dtype=rasterio.uint8,
-                    crs="EPSG:4326",  # more standard than +proj=latlong
-                    transform=transform
-                ) as dataset:
-                    dataset.write(pred_classes.astype(rasterio.uint8), 1)
-        
-                # Move to beginning of file and prepare for download
-                memfile.seek(0)
-                st.download_button(
-                    label="Download GeoTIFF",
-                    data=memfile.read(),
-                    file_name="prediction.tif",
-                    mime="image/tiff"
-                )
+                transform = from_origin(-180, 90, 0.01, 0.01)  # Adjust as needed
+                memfile = io.BytesIO()
+            
+                # Write GeoTIFF to memory
+                with rasterio.io.MemoryFile() as memfile:
+                    with memfile.open(
+                        driver="GTiff",
+                        height=pred_classes.shape[0],
+                        width=pred_classes.shape[1],
+                        count=1,
+                        dtype=rasterio.uint8,
+                        crs="EPSG:4326",  # more standard than +proj=latlong
+                        transform=transform
+                    ) as dataset:
+                        dataset.write(pred_classes.astype(rasterio.uint8), 1)
+            
+                    # Move to beginning of file and prepare for download
+                    memfile.seek(0)
+                    st.download_button(
+                        label="Download GeoTIFF",
+                        data=memfile.read(),
+                        file_name="prediction.tif",
+                        mime="image/tiff"
+                    )
 
 
             # if st.button("Export GeoTIFF"):
