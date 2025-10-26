@@ -73,7 +73,7 @@ def chunked_export(image, roi, output_path, scale=10, max_size_mb=50):
                      dtype=mosaic.dtype,
                      crs=src_files[0].crs,
                      transform=transform) as dst:
-        dst.write(mosaic.astype(np.float32))
+        dst.write(mosaic.astype(np.int16))
     
     # Cleanup
     for f in src_files:
