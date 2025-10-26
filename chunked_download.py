@@ -52,7 +52,7 @@ def chunked_export(image, roi, output_path, scale=10, max_size_mb=50):
             
             print(f'Exporting chunk {i},{j} ({x_start:.2f},{y_start:.2f})-({x_end:.2f},{y_end:.2f})')
             geemap.ee_export_image(
-                image.clip(chunk_roi),
+                image.clip(chunk_roi).int16(),
                 filename=chunk_path,
                 scale=scale,
                 region=chunk_roi
@@ -73,7 +73,7 @@ def chunked_export(image, roi, output_path, scale=10, max_size_mb=50):
                      dtype=mosaic.dtype,
                      crs=src_files[0].crs,
                      transform=transform) as dst:
-        dst.write(mosaic)
+        dst.write(mosaic.astype(np.float32))
     
     # Cleanup
     for f in src_files:
