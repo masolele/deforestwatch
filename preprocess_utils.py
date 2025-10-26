@@ -309,8 +309,9 @@ def preprocess_planet(roi, start_date, end_date):
                           )
 
     
-    arr = io.imread('clipped.tif') 
+    #arr = io.imread('clipped.tif') 
     data = "clipped.tif"
+    arr = tifffile.imread('clipped.tif')
     arr2 = preprocess_images(arr, data)
     return arr2 #np.nan_to_num(arr)
     
