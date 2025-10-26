@@ -1,1 +1,4 @@
 libgdal-dev
+gdal-bin
+libspatialite-dev
+spatialite-bin
