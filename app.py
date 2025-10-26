@@ -189,7 +189,7 @@ if roi:
             #     batch_size = 8
             # )
             pred = predict_img_with_smooth_windowing(
-                x_img,
+                x_img.astype(np.float32),
                 window_size=patch_size,
                 subdivisions=2,  # Minimal amount of overlap for windowing. Must be an even number.
                 nb_classes=n_classes,
